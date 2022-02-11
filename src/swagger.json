@@ -1,0 +1,1048 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Kenzie Market",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:3000/",
+      "description": "Local Server"
+    },
+    {
+      "url": "https://kenzie-market-app.herokuapp.com/",
+      "description": "Production Server"
+    }
+  ],
+  "paths": {
+    "/user": {
+      "get": {
+        "description": "List all users",
+        "responses": {
+          "200": {
+            "description": "List of users",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                },
+                "examples": {
+                  "user": {
+                    "value": [
+                      {
+                        "name": "Teste2",
+                        "email": "teste2@mail.com",
+                        "password": "$2a$10$mcKXMkmdhU5zLJjH5XdXQOvUQavmM1t0v3e2aefUIm9JBT0KibrZ.",
+                        "isAdm": true,
+                        "id": "88bd7ab9-778a-4da5-8a59-2225de333f92",
+                        "resetCode": null
+                      },
+                      {
+                        "name": "Teste",
+                        "email": "teste@mail.com",
+                        "password": "$2a$10$XNe1CwHfSRH2tKHQNtM8s.bWwAoTTjh.AqXU7Yi9TFpXzv8yTymUu",
+                        "isAdm": false,
+                        "id": "4e68c00a-1091-4600-be59-9d1ec7b7afc5",
+                        "resetCode": "6xCI730@$0"
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Failed to get user's list",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Path only allowed to Administrators",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Unauthorized"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "description": "Create a new User",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/User"
+              },
+              "examples": {
+                "user": {
+                  "value": {
+                    "name": "Usuário",
+                    "email": "email@mail.com",
+                    "password": "senha",
+                    "isAdm": true
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Created User",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                },
+                "examples": {
+                  "user": {
+                    "value": {
+                      "email": "mail@mail.com",
+                      "password": "$2b$10$EIzaT/Lx1nxQu/2HSGosKOI1p1YVlu0mc.Ms26BE6NXh/3H7juh9.",
+                      "name": "Teste2",
+                      "id": "c6d592ce-5a8d-4d5a-a825-5121d81b9748"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Failed to create user",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [{}]
+      }
+    },
+    "/users/:userId": {
+      "get": {
+        "description": "Get specific user by his id",
+        "responses": {
+          "200": {
+            "description": "User found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                },
+                "examples": {
+                  "user": {
+                    "value": {
+                      "name": "Teste",
+                      "email": "teste@mail.com",
+                      "password": "$2a$10$XNe1CwHfSRH2tKHQNtM8s.bWwAoTTjh.AqXU7Yi9TFpXzv8yTymUu",
+                      "isAdm": false,
+                      "id": "4e68c00a-1091-4600-be59-9d1ec7b7afc5",
+                      "resetCode": "6xCI730@$0"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Failed to get user",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Path only allowed to Administrators",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Unauthorized"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/login": {
+      "post": {
+        "description": "Log user in",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "example": "mail@mail.com"
+                  },
+                  "password": {
+                    "type": "string",
+                    "example": "password"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "User logged in and token generated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "token": {
+                      "type": "string",
+                      "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiVGVzdGUyIiwiZW1haWwiOiJ0ZXN0ZTJAbWFpbC5jb20iLCJpc0FkbSI6dHJ1ZSwiaWQiOiI4OGJkN2FiOS03NzhhLTRkYTUtOGE1OS0yMjI1ZGUzMzNmOTIiLCJpYXQiOjE2NDQyNTg3NzIsImV4cCI6MTY0NDM0NTE3Mn0.0gBJZ7W3OdvZFhE_2UxLc8cnH9O0c96EPU2XGUU5D5o"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Failed to log in",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/product": {
+      "post": {
+        "description": "Register a new product",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Product"
+              },
+              "examples": {
+                "product": {
+                  "value": {
+                    "name": "Product 1",
+                    "price": 19.99
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Product registered succesfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "example": "0a80e46e-4448-4f68-81d1-ac5c0bcf0585"
+                    },
+                    "name": {
+                      "type": "string",
+                      "example": "Product 1"
+                    },
+                    "price": {
+                      "type": "number",
+                      "example": 19.99
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Failed to register product",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "description": "List all prodcuts",
+        "responses": {
+          "200": {
+            "description": "List of products",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Product"
+                },
+                "examples": {
+                  "product": {
+                    "value": [
+                      {
+                        "price": 19.99,
+                        "name": "Product 1",
+                        "id": "b14ca050-e251-45dc-af07-c489ec726c22"
+                      },
+                      {
+                        "price": 15.99,
+                        "name": "Produto 2",
+                        "id": "d80e1152-345c-4e17-9adf-effc7a8938ed"
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": []
+      }
+    },
+    "/product/:productId": {
+      "get": {
+        "description": "Get specific product by it's id",
+        "responses": {
+          "200": {
+            "description": "Product found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Product"
+                },
+                "examples": {
+                  "product": {
+                    "value": {
+                      "price": 19.99,
+                      "name": "Produto 1",
+                      "id": "c3bae2d0-1379-48a8-bf3c-f7c5dafeaac2"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Failed to get product",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/cart": {
+      "post": {
+        "description": "Add a product to the user's cart",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "cartId": {
+                    "type": "string"
+                  },
+                  "productId": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Product added to cart succesfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Cart"
+                },
+                "examples": {
+                  "product": {
+                    "value": [
+                      {
+                        "productQuantity": 1,
+                        "cartId": "c31285a3-ce3c-40cf-a7ed-3fd2fc8ed72e",
+                        "productId": "d80e1152-345c-4e17-9adf-effc7a8938ed"
+                      },
+                      {
+                        "productQuantity": 3,
+                        "cartId": "c31285a3-ce3c-40cf-a7ed-3fd2fc8ed72e",
+                        "productId": "74446072-382c-423c-85bc-16752aa34593"
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Failed to add product to cart",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "description": "List all carts",
+        "responses": {
+          "200": {
+            "description": "Found list of carts",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Cart"
+                },
+                "examples": {
+                  "cart": {
+                    "value": [
+                      {
+                        "id": "c31285a3-ce3c-40cf-a7ed-3fd2fc8ed72e"
+                      },
+                      {
+                        "id": "934a3f25-5534-4f18-9dae-f976c0fd0899"
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Failed to get cart's list",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/cart/:userId": {
+      "get": {
+        "description": "Get user's cart",
+        "responses": {
+          "200": {
+            "description": "User's cart found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Cart"
+                },
+                "examples": {
+                  "cart": {
+                    "value": {
+                      "id": "c31285a3-ce3c-40cf-a7ed-3fd2fc8ed72e"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Failed to get user's cart",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Path only allowed to Administrators",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Unauthorized"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/cart/:productId": {
+      "delete": {
+        "description": "Remove product from cart",
+        "responses": {
+          "200": {
+            "description": "Cart updated without removed product",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Cart"
+                },
+                "examples": {
+                  "cart": {
+                    "value": [
+                      {
+                        "productQuantity": 1,
+                        "cartId": "934a3f25-5534-4f18-9dae-f976c0fd0899",
+                        "productId": "0a80e46e-4448-4f68-81d1-ac5c0bcf0585"
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Failed to remove product from cart",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/buy": {
+      "post": {
+        "description": "Buy items from user's cart",
+        "responses": {
+          "200": {
+            "description": "Cart products successfully bought",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Buy"
+                },
+                "examples": {
+                  "buy": {
+                    "value": {
+                      "productsList": [
+                        {
+                          "price": 17.99,
+                          "name": "Produto 1",
+                          "id": "d80e1152-345c-4e17-9adf-effc7a8938ed"
+                        },
+                        {
+                          "price": 17.99,
+                          "name": "Produto 3",
+                          "id": "74446072-382c-423c-85bc-16752aa34593"
+                        }
+                      ],
+                      "total": 35.98,
+                      "id": "868155d1-75ed-4b43-948c-69cc6eb7de00",
+                      "date": "2022-02-05T16:36:03.217Z"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Failed to buy products from cart",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "description": "List all buy orders",
+        "responses": {
+          "200": {
+            "description": "List of all buy orders",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Buy"
+                },
+                "examples": {
+                  "buy": {
+                    "value": [
+                      {
+                        "total": 53.97,
+                        "id": "868155d1-75ed-4b43-948c-69cc6eb7de00",
+                        "date": "2022-02-05T16:36:03.217Z"
+                      },
+                      {
+                        "total": 19.979999999999997,
+                        "id": "e79429bb-d4d2-495e-8ed1-91d6e90b0c67",
+                        "date": "2022-02-08T12:26:13.808Z"
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Path only allowed to Administrators",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/buy/:buyId": {
+      "get": {
+        "description": "Get specific buy order by it's id",
+        "responses": {
+          "200": {
+            "description": "Buy order found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Buy"
+                },
+                "examples": {
+                  "buy": {
+                    "value": {
+                      "total": 53.97,
+                      "id": "868155d1-75ed-4b43-948c-69cc6eb7de00",
+                      "date": "2022-02-05T16:36:03.217Z"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Failed to get buy order",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/email": {
+      "post": {
+        "description": "Admnistrator sends e-mail to desired user",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "userId": {
+                    "type": "string"
+                  },
+                  "subject": {
+                    "type": "string"
+                  },
+                  "content": {
+                    "type": "string"
+                  }
+                }
+              },
+              "examples": {
+                "req": {
+                  "value": {
+                    "userId": "4e68c00a-1091-4600-be59-9d1ec7b7afc5",
+                    "subject": "Email test",
+                    "content": "Lorem ipsum dolor"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "E-mail sent successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "An e-mail has been sent to test@mail.com"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Failed to send e-mail",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Path only allowed to Administrators",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Unauthorized"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/recuperar": {
+      "post": {
+        "description": "Recover user's password",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "example": "test@mail.com"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "E-mail with recover code sent successfully to user's e-mail",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "An e-mail has been sent to test@mail.com"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Failed to send e-mail",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/alterar_senha": {
+      "post": {
+        "description": "Change user's password",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "code": {
+                    "type": "string"
+                  },
+                  "password": {
+                    "type": "string"
+                  }
+                }
+              },
+              "examples": {
+                "req": {
+                  "value": {
+                    "code": "6xCI730@$0",
+                    "password": "12345"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Password changed successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                },
+                "examples": {
+                  "user": {
+                    "value": {
+                      "name": "Test",
+                      "email": "test@mail.com",
+                      "password": "$2a$10$XNe1CwHfSRH2tKHQNtM8s.bWwAoTTjh.AqXU7Yi9TFpXzv8yTymUu",
+                      "isAdm": false,
+                      "id": "4e68c00a-1091-4600-be59-9d1ec7b7afc5",
+                      "resetCode": "6xCI730@$0"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Failed to change password",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "User": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Generated with UUID V4",
+            "readOnly": true
+          },
+          "email": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string",
+            "description": "Hashed with BCrypt"
+          },
+          "name": {
+            "type": "string"
+          },
+          "isAdm": {
+            "type": "boolean"
+          },
+          "resetCode": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "Product": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Generated with UUID V4",
+            "readOnly": true
+          },
+          "name": {
+            "type": "string"
+          },
+          "price": {
+            "type": "number"
+          }
+        }
+      },
+      "Cart": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "userId": {
+            "type": "string"
+          },
+          "products": {
+            "type": "array",
+            "items": {
+              "type": "Product"
+            }
+          }
+        }
+      },
+      "Buy": {
+        "type": "object",
+        "properties": {
+          "productsList": {
+            "type": "array",
+            "items": {
+              "type": "Product"
+            }
+          },
+          "total": {
+            "type": "number"
+          },
+          "id": {
+            "type": "string"
+          },
+          "date": {
+            "type": "date"
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "JWT": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    }
+  },
+  "security": [
+    {
+      "JWT": []
+    }
+  ]
+}
