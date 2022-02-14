@@ -1,6 +1,5 @@
 import { Request, Response } from "express";
 import { LoginUserService } from "../services/login.service";
-import jwt from "jsonwebtoken";
 
 export class LoginController {
   async handle(req: Request, res: Response) {

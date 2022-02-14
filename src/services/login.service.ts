@@ -17,7 +17,7 @@ export class LoginUserService {
         return { message: "Wrong email/password" };
       }
       const token = jwt.sign(
-        { cpf: patient.cpf },
+        { cpf: patient.cpf, name: patient.name },
         process.env.SECRET as string,
         {
           expiresIn: "1d",
@@ -28,7 +28,10 @@ export class LoginUserService {
         return { message: "Wrong email/password" };
       }
       const token = jwt.sign(
-        { council_number: professional.council_number },
+        {
+          council_number: professional.council_number,
+          name: professional.name,
+        },
         process.env.SECRET as string,
         {
           expiresIn: "1d",
