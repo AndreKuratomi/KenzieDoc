@@ -15,7 +15,7 @@ export class Patient {
   @Column()
   sex: string;
 
-  @Column()
+  @Column({ unique: true })
   email: string;
 
   @Column()

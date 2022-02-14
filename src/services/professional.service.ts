@@ -1,4 +1,4 @@
-import { ProfessionalsRepository } from "../repositories/professionals.repository";
+import ProfessionalsRepository from "../repositories/professionals.repository";
 import { getCustomRepository } from "typeorm";
 import { Professional } from "../entities";
 import bcryptjs from "bcryptjs";
@@ -31,6 +31,10 @@ export const updateProfessionalService = async (
   await professionalsRepository.update(id, data);
 
   const updatedProfessional = await professionalsRepository.findOne(id);
+
+  if (!updatedProfessional) {
+    throw new Error("This professional does not exist");
+  }
 
   return updatedProfessional;
 };
