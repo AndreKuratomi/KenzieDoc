@@ -1,7 +1,5 @@
-import { User } from "./user.entity";
-import { Cart } from "./cart.entity";
-import { Product } from "./product.entity";
-import { Buys } from "./buys.entity";
-import { CartsProducts } from "./carts_products.entity";
+import { Professional } from "./professionals.entity";
+import { Patient } from "./patients.entity";
+import { Appointment } from "./appointments";
 
-export { User, Cart, Product, Buys, CartsProducts };
+export { Professional, Patient, Appointment };
