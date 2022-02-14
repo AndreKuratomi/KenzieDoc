@@ -12,20 +12,14 @@ export const authentcateUser = async (email: string, password: string) => {
   const professional = await professionalRepository.findByEmail(email);
 
   if (patient) {
-    if (
-      patient === undefined ||
-      !bcrypt.compareSync(password, patient.password)
-    ) {
+    if (!bcrypt.compareSync(password, patient.password)) {
       return { message: "Wrong email/password" };
     }
     const token = jwt.sign({ id: patient.id }, process.env.SECRET as string, {
       expiresIn: "1d",
     });
   } else if (professional) {
-    if (
-      professional === undefined ||
-      !bcrypt.compareSync(password, professional.password)
-    ) {
+    if (!bcrypt.compareSync(password, professional.password)) {
       return { message: "Wrong email/password" };
     }
     const token = jwt.sign(
@@ -35,7 +29,8 @@ export const authentcateUser = async (email: string, password: string) => {
         expiresIn: "1d",
       }
     );
-  } else {
-    //Admin
   }
+  //Verify Admin
+
+  return { message: "User don't exisist" };
 };
