@@ -15,7 +15,7 @@ export const authentcateUser = async (email: string, password: string) => {
     if (!bcrypt.compareSync(password, patient.password)) {
       return { message: "Wrong email/password" };
     }
-    const token = jwt.sign({ id: patient.id }, process.env.SECRET as string, {
+    const token = jwt.sign({ cpf: patient.cpf }, process.env.SECRET as string, {
       expiresIn: "1d",
     });
   } else if (professional) {
@@ -23,7 +23,7 @@ export const authentcateUser = async (email: string, password: string) => {
       return { message: "Wrong email/password" };
     }
     const token = jwt.sign(
-      { id: professional.id },
+      { council_number: professional.council_number },
       process.env.SECRET as string,
       {
         expiresIn: "1d",
