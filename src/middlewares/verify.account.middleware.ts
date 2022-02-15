@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import  ErrorHandler from "../errors/application.error";
+import  ErrorHandler from "../utils/errors";
 
 const verifyAccount = async (req: any, res: Response, next: NextFunction) => {
 
