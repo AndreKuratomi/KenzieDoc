@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import jwt from "jsonwebtoken";
-import  ErrorHandler from "../errors/application.error";
+import  ErrorHandler from "../utils/errors";
 
 
 const authenticated = (req: any, res: Response, next: NextFunction) => {
@@ -18,7 +18,6 @@ const authenticated = (req: any, res: Response, next: NextFunction) => {
         }
             const userId = decoded.id;
             const isAdmin = decoded.isAdmin
-            
     
             req.user = { 
                 id: userId, 

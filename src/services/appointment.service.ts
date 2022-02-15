@@ -1,6 +1,7 @@
 import { AppointmentsRepository } from "../repositories/appointments.repository";
-import { getCustomRepository } from "typeorm";
+import { getCustomRepository, LessThan, MoreThan } from "typeorm";
 import { Appointment } from "../entities";
+import { Between } from "typeorm";
 
 export class CreateAppointmentService {
   async execute(data: Appointment) {
@@ -55,5 +56,68 @@ export class DeleteAppointmentService {
     );
 
     return deletedAppointment;
+  }
+}
+
+export class AppointmentByPatientService {
+  async execute(patientId: string) {
+    const appointmentsRepository = getCustomRepository(AppointmentsRepository);
+
+    const appointments = await appointmentsRepository.find({
+      where: { patient: patientId },
+    });
+
+    return appointments;
+  }
+}
+
+export class AppointmentByProfessionalService {
+  async execute(professionalId: string) {
+    const appointmentsRepository = getCustomRepository(AppointmentsRepository);
+
+    const appointments = await appointmentsRepository.find({
+      where: { professional: professionalId },
+    });
+
+    return appointments;
+  }
+}
+
+export class AppointmentsTomorrowService {
+  async execute(date: string) {
+    const appointmentsRepository = getCustomRepository(AppointmentsRepository);
+    const currentDate = new Date();
+    const yearMonth =
+      currentDate.getFullYear() +
+      "-" +
+      String(currentDate.getMonth() + 1).padStart(2, "0") +
+      "-";
+    const tomorrow =
+      yearMonth + String(currentDate.getDate()).padStart(2, "0") + "T21:00";
+
+    const endTomorrow =
+      yearMonth + String(currentDate.getDate() + 1).padStart(2, "0") + "T20:59";
+
+    const appointments = await appointmentsRepository.find({
+      date: Between(tomorrow, endTomorrow),
+    });
+    return appointments;
+  }
+}
+
+export class WaitListService {
+  async execute(crm: String) {
+    const appointmentsRepository = getCustomRepository(AppointmentsRepository);
+    const currentDate = new Date();
+    currentDate.setHours(currentDate.getHours() - 3);
+
+    const lateAppointments = await appointmentsRepository.find({
+      where: {
+        professional: crm,
+        finished: false,
+        date: LessThan(currentDate),
+      },
+    });
+    return lateAppointments.length;
   }
 }
