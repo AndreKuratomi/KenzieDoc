@@ -8,7 +8,7 @@ export class CreateAppointmentService {
     const appointmentsRepository = getCustomRepository(AppointmentsRepository);
 
     const newAppointment = appointmentsRepository.create(data);
-
+    console.log(newAppointment);
     await appointmentsRepository.save(newAppointment);
 
     return newAppointment;

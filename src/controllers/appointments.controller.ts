@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { resolve } from "path/posix";
+import { transport, mailOptions } from "../services/emails";
 
 import {
   CreateAppointmentService,
@@ -12,12 +12,67 @@ import {
   WaitListService,
 } from "../services/appointment.service";
 
+import { Patient, Professional } from "../entities";
+import { getRepository } from "typeorm";
+
 export class CreateAppointmentController {
   async handle(req: Request, res: Response) {
     const createAppointmentService = new CreateAppointmentService();
     const data = req.body;
+    const { professional, patient, date } = data;
+    const patientRepository = getRepository(Patient);
+    const professionalRepository = getRepository(Professional);
+
     try {
       const appointment = await createAppointmentService.execute(data);
+
+      const [oneProfessional] = await professionalRepository.find({
+        where: { council_number: professional },
+      });
+      const [onePatient] = await patientRepository.find({
+        where: { cpf: patient },
+      });
+
+      const emailForPatient = mailOptions(
+        [onePatient.email],
+        `Confirmação de agendamento de consulta em ${date}`,
+        "emailAppointPatient",
+        {
+          date: date,
+          patientName: onePatient.name,
+          professionalName: oneProfessional.name,
+          professionalSpecialty: oneProfessional.specialty,
+        }
+      );
+
+      transport.sendMail(emailForPatient, function (err, info) {
+        if (err) {
+          console.log(err);
+        } else {
+          console.log(info);
+        }
+      });
+
+      const emailForProfessional = mailOptions(
+        [oneProfessional.email],
+        `Confirmação de agendamento de consulta em ${date}`,
+        "emailAppointProfessional",
+        {
+          date: date,
+          patientName: onePatient.name,
+          professionalName: oneProfessional.name,
+          professionalSpecialty: oneProfessional.specialty,
+        }
+      );
+
+      transport.sendMail(emailForProfessional, function (err, info) {
+        if (err) {
+          console.log(err);
+        } else {
+          console.log("Message enviada: " + info.response);
+        }
+      });
+
       res.status(201).json(appointment);
     } catch (err: any) {
       return res.status(400).json({ message: err.message });
