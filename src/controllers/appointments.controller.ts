@@ -6,6 +6,10 @@ import {
   AppointmentsListService,
   UpdateAppointmentService,
   DeleteAppointmentService,
+  AppointmentByPatientService,
+  AppointmentByProfessionalService,
+  AppointmentsTomorrowService,
+  WaitListService,
 } from "../services/appointment.service";
 
 export class CreateAppointmentController {
@@ -16,7 +20,7 @@ export class CreateAppointmentController {
       const appointment = await createAppointmentService.execute(data);
       res.status(201).json(appointment);
     } catch (err: any) {
-      return res.status(err.statusCode).json({ message: err.message });
+      return res.status(400).json({ message: err.message });
     }
   }
 }
@@ -58,6 +62,68 @@ export class DeleteAppointmentController {
       return res.status(204).json(toDelete);
     } catch (err: any) {
       return res.status(err.statusCode).json({ message: err.message });
+    }
+  }
+}
+
+export class AppointmentByPatientController {
+  async handle(req: Request, res: Response) {
+    const appointmentByPatientService = new AppointmentByPatientService();
+    const { cpf } = req.params;
+
+    try {
+      const appointments = await appointmentByPatientService.execute(cpf);
+
+      return res.status(200).json(appointments);
+    } catch (err: any) {
+      return res.status(400).json({ message: err.message });
+    }
+  }
+}
+export class AppointmentByProfessionalController {
+  async handle(req: Request, res: Response) {
+    const appointmentByProfessionalService =
+      new AppointmentByProfessionalService();
+    const { crm } = req.params;
+
+    try {
+      const appointments = await appointmentByProfessionalService.execute(crm);
+
+      return res.status(200).json(appointments);
+    } catch (err: any) {
+      return res.status(400).json({ message: err.message });
+    }
+  }
+}
+
+export class AppointmentsTomorrowController {
+  async handle(req: Request, res: Response) {
+    const appointmentsTomorrowService = new AppointmentsTomorrowService();
+
+    try {
+      const appointments = await appointmentsTomorrowService.execute(
+        "2022-02-20"
+      );
+
+      return res.status(200).json(appointments);
+    } catch (err: any) {
+      return res.status(400).json({ message: err.message });
+    }
+  }
+}
+export class WaitListController {
+  async handle(req: Request, res: Response) {
+    const waitListService = new WaitListService();
+    const { crm } = req.params;
+
+    try {
+      const waitListSize = await waitListService.execute(crm);
+
+      return res
+        .status(200)
+        .json({ message: `wait list size is: ${waitListSize}` });
+    } catch (err: any) {
+      return res.status(400).json({ message: err.message });
     }
   }
 }
