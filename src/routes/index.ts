@@ -2,13 +2,15 @@ import { Router } from "express";
 import professionalsRouter from "./professional.routes";
 import patientsRouter from "./patients.routes";
 import appointmentsRouter from "./appointments.routes";
-import userRouter from "./login.routes";
+import loginRouter from "./login.routes";
+import adminRouter from "./admin.routes";
 
 const router = Router();
 
-router.use("/login", userRouter);
+router.use("/login", loginRouter);
 router.use("/professional", professionalsRouter);
 router.use("/patient", patientsRouter);
 router.use("/appointment", appointmentsRouter);
+router.use("/admin", adminRouter);
 
 export default router;

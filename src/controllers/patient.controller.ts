@@ -14,12 +14,9 @@ export class CreatePatientController {
 
     try {
       const patient = await createPatientService.execute(data);
-
-      const { password: data_password, ...dataWithoutPassword } = patient;
-
-      return res.status(201).json(dataWithoutPassword);      
+      return res.status(201).send(patient);
     } catch (err: any) {
-      return res.status(400).json({ message: err.message });
+      return res.status(err.statusCode).json({ message: err.message });
     }   
   }
 }
