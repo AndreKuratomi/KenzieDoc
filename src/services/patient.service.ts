@@ -27,12 +27,12 @@ export class PatientsListService {
 }
 
 export class UpdatePatientService {
-  async execute(id: string, data: Patient) {
+  async execute(cpf: string, data: Patient) {
     const patientsRepository = getCustomRepository(PatientsRepository);
 
-    await patientsRepository.update(id, data);
+    await patientsRepository.update(cpf, data);
 
-    const updatedPatient = await patientsRepository.findOne(id);
+    const updatedPatient = await patientsRepository.findOne(cpf);
 
     if (!updatedPatient) {
       throw new Error("This patient does not exist");
@@ -42,10 +42,10 @@ export class UpdatePatientService {
   }
 }
 export class DeletePatientService {
-  async execute(id: string) {
+  async execute(cpf: string) {
     const patientsRepository = getCustomRepository(PatientsRepository);
 
-    const patientToDelete = await patientsRepository.findOne(id);
+    const patientToDelete = await patientsRepository.findOne(cpf);
 
     if (!patientToDelete) {
       throw new Error("This patient does not exist");
