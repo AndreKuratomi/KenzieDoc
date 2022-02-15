@@ -28,6 +28,6 @@ export class Admin {
     this.name = name;
     this.email = email;
     this.password = password;
-    this.isAdm = isAdm;
+    this.isAdm = true;
   }
 }
