@@ -8,8 +8,8 @@ export const create = async (req: Request, res: Response, next: NextFunction) =>
     const patient = await createPatientService.execute(req.body);
 
     return res.status(201).send(patient);
-  } catch (err) {
-    return res.status(400).send({message: "E-mail already registered"});
+  } catch (err: any) {
+    return res.status(err.statusCode).json(err.message);
   }   
 }
 
