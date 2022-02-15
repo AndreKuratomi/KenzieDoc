@@ -47,3 +47,17 @@ export class UpdateAppointmentController {
     }
   }
 }
+
+export class DeleteAppointmentController {
+  async handle(req: Request, res: Response) {
+    const { id } = req.params;
+    try {
+      const deleteAppointmentService = new DeleteAppointmentService();
+
+      const toDelete = deleteAppointmentService.execute(id);
+      return res.status(204).json(toDelete);
+    } catch (err: any) {
+      return res.status(err.statusCode).json({ message: err.message });
+    }
+  }
+}
