@@ -33,7 +33,10 @@ export class CreatePatientService {
 
     await patientsRepository.save(newPatient);
 
-    return newPatient;
+    const {password: data_password, ...newData} = newPatient
+
+
+    return newData;
   }
 }
 
