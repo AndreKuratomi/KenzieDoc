@@ -6,6 +6,7 @@ import {
   AppointmentsListService,
   UpdateAppointmentService,
   DeleteAppointmentService,
+  AppointmentsListService,
 } from "../services/appointment.service";
 
 export class CreateAppointmentController {
@@ -17,6 +18,19 @@ export class CreateAppointmentController {
       res.status(201).json(appointment);
     } catch (err: any) {
       return res.status(err.statusCode).json({ message: err.message });
+    }
+  }
+}
+
+export class AppointmentsListController {
+  async handle(req: Request, res: Response) {
+    try {
+      const appointmentsListService = new AppointmentsListService();
+      const list = await appointmentsListService.execute();
+
+      return res.status(200).json(list);
+    } catch (err: any) {
+      return res.status(err.statusCode).json(err.message);
     }
   }
 }
