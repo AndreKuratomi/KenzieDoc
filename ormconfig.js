@@ -10,7 +10,7 @@ const devEnv = {
   cli: {
     migrationsDir: "./src/migrations",
   },
-  logging: true,
+  logging: false,
   synchronize: false,
 };
 
