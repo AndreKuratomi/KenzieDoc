@@ -1,22 +1,19 @@
 import { NextFunction, Request, Response } from "express";
-import  ErrorHandler from "../utils/errors";
+import ErrorHandler from "../utils/errors";
 
 const verifyAccount = async (req: any, res: Response, next: NextFunction) => {
-
   try {
-
     const userInfo = req.user;
     const userId = req.params.id;
 
-    if (userInfo.id !== userId && userInfo.isAdmin === false) {
-      throw new ErrorHandler("Missing admin permissions", 401);
+    if (userInfo.id !== userId && userInfo.isAdm !== true) {
+      throw new ErrorHandler("Missing permissions", 401);
     }
-  
-    return next();
 
+    return next();
   } catch (error: any) {
-    return res.status(error.statusCode).json(error.message)
+    return res.status(error.statusCode).json(error.message);
   }
 };
 
-export default verifyAccount
+export default verifyAccount;
