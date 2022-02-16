@@ -36,7 +36,7 @@ export class CreateAppointmentController {
       }
       if (typeof finished !== "boolean") {
         throw new ErrorHandler(
-          "This field must be typeof boolean or it is missing!",
+          "This field must be typeof boolean or this fiel is missing!",
           400
         );
       }
@@ -45,7 +45,7 @@ export class CreateAppointmentController {
 
       res.status(201).json(appointment);
     } catch (error: any) {
-      return res.status(error.statusCode).json({ message: error.message });
+      return res.status(500).json({ message: error.message });
     }
   }
 }

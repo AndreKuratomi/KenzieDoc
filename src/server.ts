@@ -2,7 +2,7 @@ import "reflect-metadata";
 import { createConnection } from "typeorm";
 import app from "./app";
 
-const PORT = 4000;
+const PORT = 3000;
 
 createConnection()
   .then(() => {
