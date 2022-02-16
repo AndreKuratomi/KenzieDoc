@@ -1,5 +1,4 @@
 import { Request, Response } from "express";
-import { transport, mailOptions } from "../services/emails";
 
 import {
   CreateAppointmentService,
