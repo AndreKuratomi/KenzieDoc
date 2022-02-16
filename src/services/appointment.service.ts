@@ -104,9 +104,9 @@ export class UpdateAppointmentService {
     const updatedAppointment = await appointmentsRepository.findOne(id);
 
     if (!updatedAppointment) {
-      throw new ErrorHandler("This professional does not exist", 404);
+      throw new ErrorHandler("This appointment does not exist", 404);
     }
-
+    console.log(updatedAppointment);
     return updatedAppointment;
   }
 }

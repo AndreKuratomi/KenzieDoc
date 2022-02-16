@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 
 import {
   CreateAppointmentService,
-  AppointmentsListService,
+  // AppointmentsListService,
   UpdateAppointmentService,
   DeleteAppointmentService,
   AppointmentByPatientService,
@@ -12,6 +12,8 @@ import {
 } from "../services/appointment.service";
 import ErrorHandler from "../utils/errors";
 import { IAppointmentData } from "../types";
+import { getCustomRepository } from "typeorm";
+import { AppointmentsRepository } from "../repositories/appointments.repository";
 
 export class CreateAppointmentController {
   async handle(req: Request, res: Response) {
@@ -104,6 +106,7 @@ export class AppointmentsTomorrowController {
     }
   }
 }
+
 export class WaitListController {
   async handle(req: Request, res: Response) {
     const waitListService = new WaitListService();
@@ -139,11 +142,13 @@ export class UpdateAppointmentController {
     const { id } = req.params;
     const data = req.body;
     const updateAppointmentService = new UpdateAppointmentService();
+
     try {
-      const toUpdate = updateAppointmentService.execute(id, data);
+      const toUpdate = await updateAppointmentService.execute(id, data);
+
       return res.status(200).json(toUpdate);
     } catch (err: any) {
-      return res.status(err.statusCode).json({ message: err.message });
+      return res.status(400).json({ message: err.message });
     }
   }
 }

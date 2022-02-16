@@ -10,6 +10,7 @@ import {
   AppointmentsTomorrowController,
   WaitListController,
 } from "../controllers/appointments.controller";
+import isValidUUID from "../middlewares/uuid.middleware";
 
 const createAppointmentController = new CreateAppointmentController();
 // const appointmentsListController = new AppointmentsListController();
@@ -32,7 +33,11 @@ appointmentsRouter.get(
 appointmentsRouter.get("/tomorrow", appointmentsTomorrowController.handle);
 // appointmentsRouter.get("/wait_list", appointmentsListController.handle);
 appointmentsRouter.get("/wait_list/:crm", waitListController.handle);
-appointmentsRouter.patch("/:id", updateAppointmentController.handle);
+appointmentsRouter.patch(
+  "/:id",
+  isValidUUID,
+  updateAppointmentController.handle
+);
 appointmentsRouter.delete("/:id", deleteAppointmentController.handle);
 
 export default appointmentsRouter;
