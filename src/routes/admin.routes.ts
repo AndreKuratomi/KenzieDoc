@@ -12,6 +12,11 @@ const updateAdminController = new UpdateAdminController();
 const adminRouter = Router();
 
 adminRouter.post("", createAdminController.handle);
-adminRouter.patch("", authenticated, verifyAdmin, updateAdminController.handle);
+adminRouter.patch(
+  "/:id",
+  authenticated,
+  verifyAdmin,
+  updateAdminController.handle
+);
 
 export default adminRouter;
