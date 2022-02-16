@@ -22,7 +22,7 @@ export const transport = nodemailer.createTransport({
 
   export const mailOptions = (to: string, subject: string, text: string) => {
     return {
-        from: 'no-reply@marketapp.mk',
+        from: 'no-reply@kenziedoc.com',
         to,
         subject,
         text,
@@ -31,7 +31,7 @@ export const transport = nodemailer.createTransport({
 
 export const mailTemplateOptions = (to: string, subject: string, template: string, context: any) => {
     return {
-        from: 'no-reply@marketapp.mk',
+        from: 'no-reply@kenziedoc.com',
         to,
         subject,
         template,
@@ -84,7 +84,6 @@ export const sendAppointmentEmail = async (user: string, medic: string, email: s
                 hour,
             }
             )
-            console.log({"O email é":email})
             transport.sendMail(message, function (err, info) {
                 if (err) {
                     return console.log(err);
@@ -94,34 +93,37 @@ export const sendAppointmentEmail = async (user: string, medic: string, email: s
             });
         }
 
-// export const sendCancelEmail = async (email: string[], subject: string, specialty: string, name: string, date: Date) => {
+        export const sendCancelationEmail = async (user: string, medic: string, email: string, specialty: string, date: string) => {
 
-//             const handlebarOption: NodemailerExpressHandlebarsOptions = {
-//                     viewEngine: {
-//                         partialsDir: path.resolve(__dirname, '.', 'templates'),
-//                         defaultLayout: undefined
-//                     },
-//                     viewPath: path.resolve(__dirname, '.', 'templates')
-//                 }
-                
-//                 transport.use('compile', hbs(handlebarOption));
+            const subject = "Cancelamento de consulta"
         
-//                 const message = mailTemplateOptions(
-//                     [email], 
-//                     subject,
-//                     'cancel',
-//                     {
-//                         name,
-//                         subject,
-//                         specialty,
-//                         date,
-//                     }
-//                     )
-//                     transport.sendMail(message, function (err, info) {
-//                         if (err) {
-//                             return console.log(err);
-//                         } else {
-//                             console.log(info);
-//                         }
-//                     });
-//                 } 
+            const handlebarOption: NodemailerExpressHandlebarsOptions = {
+                    viewEngine: {
+                        partialsDir: path.resolve(__dirname, '..', 'templates'),
+                        defaultLayout: undefined
+                    },
+                    viewPath: path.resolve(__dirname, '..', 'templates')
+                }
+                
+                transport.use('compile', hbs(handlebarOption));
+
+                const message = mailTemplateOptions(
+                    email,
+                    subject,
+                    'cancel.appointment',
+                    {
+                        user,
+                        medic,
+                        specialty,
+                        date,
+                        }
+                    )
+                    
+                    transport.sendMail(message, function (err, info) {
+                        if (err) {
+                            return console.log(err);
+                        } else {
+                            console.log(info);
+                        }
+                    });
+                }
