@@ -6,6 +6,7 @@ import {
   UpdateProfessionalController,
 } from "../controllers/professional.controller";
 import authenticated from "../middlewares/authenticate.user.middletare";
+import verifyAccount from "../middlewares/verify.account.middleware";
 import verifyAdmin from "../middlewares/verify.admin.middleware";
 
 const createProfessionalController = new CreateProfessionalController();
@@ -22,7 +23,17 @@ professionalsRouter.get(
   verifyAdmin,
   professionalListController.handle
 );
-professionalsRouter.patch("/:id", updateProfessionalController.handle);
-professionalsRouter.delete("/:id", deleteProfessionalionalController.handle);
+professionalsRouter.patch(
+  "/:id",
+  authenticated,
+  verifyAccount,
+  updateProfessionalController.handle
+);
+professionalsRouter.delete(
+  "/:id",
+  authenticated,
+  verifyAccount,
+  deleteProfessionalionalController.handle
+);
 
 export default professionalsRouter;
