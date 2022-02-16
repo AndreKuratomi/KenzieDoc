@@ -8,6 +8,12 @@ import ErrorHandler from "../utils/errors";
 
 export class LoginUserService {
   async execute(email: string, password: string) {
+    if (!email || !password) {
+      throw new ErrorHandler("One or more of the body fields is missing!", 400);
+    }
+    if (typeof email !== "string" || typeof password !== "string") {
+      throw new ErrorHandler("This field must be typeof string!", 400);
+    }
     const patientRepository = getCustomRepository(PatientRepository);
     const patient = await patientRepository.findByEmail(email);
 

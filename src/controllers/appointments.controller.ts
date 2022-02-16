@@ -10,18 +10,42 @@ import {
   AppointmentsTomorrowService,
   WaitListService,
 } from "../services/appointment.service";
+import ErrorHandler from "../utils/errors";
+import { IAppointmentData } from "../types";
 
 export class CreateAppointmentController {
   async handle(req: Request, res: Response) {
     const createAppointmentService = new CreateAppointmentService();
     const data = req.body;
-
+    console.log(data);
+    const { professional, patient, date, finished }: IAppointmentData = data;
     try {
+      if (!professional || !patient || !date) {
+        throw new ErrorHandler(
+          "One or more of the body fields is missing!",
+          400
+        );
+      }
+
+      if (
+        typeof professional !== "string" ||
+        typeof patient !== "string" ||
+        typeof date !== "string"
+      ) {
+        throw new ErrorHandler("This field must be typeof string!", 400);
+      }
+      if (typeof finished !== "boolean") {
+        throw new ErrorHandler(
+          "This field must be typeof boolean or it is missing!",
+          400
+        );
+      }
+
       const appointment = await createAppointmentService.execute(data);
 
       res.status(201).json(appointment);
-    } catch (err: any) {
-      return res.status(400).json({ message: err.message });
+    } catch (error: any) {
+      return res.status(error.statusCode).json({ message: error.message });
     }
   }
 }
