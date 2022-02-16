@@ -1,50 +1,87 @@
-import { Request, Response, NextFunction } from "express";
-import { CreatePatientService, PatientsListService, UpdatePatientService, DeletePatientService } from "../services/patient.service"
-    
-export const create = async (req: Request, res: Response, next: NextFunction) => {
-  const createPatientService = new CreatePatientService()
-
-  try {
-    const patient = await createPatientService.execute(req.body);
-
-    return res.status(201).send(patient);
-  } catch (err: any) {
-    return res.status(err.statusCode).json(err.message);
-  }   
-}
-
-export const list = async (req: Request, res: Response) => {
-  const listPatientService = new PatientsListService()
-
-  const patient = await listPatientService.execute();
-
-  return res.send(patient);
-}
-
-export const updating = async (req: Request, res: Response, next: NextFunction) => {
-  const updatePatientService = new UpdatePatientService()
-
-  try {
-    const { id } = req.params;
-
-    const updatedUser = await updatePatientService.execute(id, req.body);
-
-    return res.send(updatedUser);
-  } catch (error) {
-    next(error)
-  }    
-}
-
-export const deleting = async (req: Request, res: Response, next: NextFunction) => {
-  const deletePatientService = new DeletePatientService()
+import { Request, Response } from "express";
+import { 
+  CreatePatientService, 
+  PatientsListService, 
+  UpdatePatientService, 
+  DeletePatientService 
+} from "../services/patient.service"
   
-  try {
-    const { id } = req.params;
+export class CreatePatientController {
+  async handle(req: Request, res: Response) {
 
-    await deletePatientService.execute(id);
+    const createPatientService = new CreatePatientService()
+    const data = req.body;
 
-    return res.sendStatus(204);
-  } catch (error) {
-    next(error)
+    try {
+      const patient = await createPatientService.execute(data);
+      return res.status(201).send(patient);
+    } catch (err: any) {
+      return res.status(err.statusCode).json({ message: err.message });
+    }   
+  }
+}
+
+export class PatientsListController {
+  async handle(req: Request, res: Response) {
+    const listPatientService = new PatientsListService()
+
+    try{
+      const patient = await listPatientService.execute();
+
+      let listWithoutPassword = []
+      let eachPatient = {}
+
+      for (let i in patient){
+        eachPatient = {
+            cpf: patient[i].cpf,
+            name: patient[i].name,
+            age: patient[i].age,
+            sex: patient[i].sex,
+            email: patient[i].email,
+            phone: patient[i].phone,
+            health_plan: patient[i].health_plan
+        }
+        listWithoutPassword.push(eachPatient)
+      }   
+
+      return res.json(listWithoutPassword);
+    } catch (err:any) {
+      return res.status(400).json({ message: err.message });
+    }
+  }
+}
+
+export class UpdatePatientController {
+  async handle(req: Request, res: Response) {
+    const updatePatientService = new UpdatePatientService()
+
+    try {
+      const { cpf } = req.params;
+
+      const updatedPatient = await updatePatientService.execute(cpf, req.body);
+
+      const { password: data_password, ...dataWithoutPassword } = updatedPatient;
+
+      return res.status(201).json(dataWithoutPassword);
+
+    } catch (err: any) {
+      return res.status(400).json({ message: err.message });
+    }    
+  }
+}
+
+export class DeletePatientController {
+  async handle(req: Request, res: Response) {
+    const deletePatientService = new DeletePatientService()
+    
+    try {
+      const { cpf } = req.params;
+
+      await deletePatientService.execute(cpf);
+
+      return res.sendStatus(204);
+    } catch (err: any) {
+      return res.status(400).json({ message: err.message });
+    }
   }
 }

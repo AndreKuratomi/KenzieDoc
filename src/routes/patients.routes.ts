@@ -1,11 +1,21 @@
 import { Router } from "express";
-import { create, list, updating, deleting } from "../controllers/patient.controller";
+import { 
+  CreatePatientController, 
+  PatientsListController, 
+  UpdatePatientController, 
+  DeletePatientController
+} from "../controllers/patient.controller";
+
+const createPatientController = new CreatePatientController();
+const patientsListController = new PatientsListController();
+const updatePatientController = new UpdatePatientController();
+const deletePatientController = new DeletePatientController();
 
 const patientsRouter = Router();
 
-patientsRouter.post("", create);
-patientsRouter.get("", list);
-patientsRouter.patch("/:id", updating);
-patientsRouter.delete("/:id", deleting);
+patientsRouter.post("", createPatientController.handle);
+patientsRouter.get("", patientsListController.handle);
+patientsRouter.patch("/:cpf", updatePatientController.handle);
+patientsRouter.delete("/:cpf", deletePatientController.handle);
 
 export default patientsRouter;
