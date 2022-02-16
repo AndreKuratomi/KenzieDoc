@@ -32,7 +32,8 @@ export class ProfessionalsListController {
 
       return res.status(200).json(list);
     } catch (err: any) {
-      return res.status(400).json({ message: err.message });
+      console.log(err);
+      // return res.status(400).json({ message: err.message });
     }
   }
 }
