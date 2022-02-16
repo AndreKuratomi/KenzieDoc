@@ -38,6 +38,10 @@ appointmentsRouter.patch(
   isValidUUID,
   updateAppointmentController.handle
 );
-appointmentsRouter.delete("/:id", deleteAppointmentController.handle);
+appointmentsRouter.delete(
+  "/:id",
+  isValidUUID,
+  deleteAppointmentController.handle
+);
 
 export default appointmentsRouter;

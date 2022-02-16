@@ -115,9 +115,11 @@ export class DeleteAppointmentService {
   async execute(id: string) {
     const appointmentsRepository = getCustomRepository(AppointmentsRepository);
 
-    const appointmentToDelete = await appointmentsRepository.findOne(id);
+    const appointmentToDelete = await appointmentsRepository.find({
+      where: { id },
+    });
 
-    if (!appointmentToDelete) {
+    if (appointmentToDelete.length === 0) {
       throw new ErrorHandler("This appointment does not exist", 404);
     }
 

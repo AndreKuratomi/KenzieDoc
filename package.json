@@ -8,8 +8,7 @@
     "start": "node dist/server.js",
     "dev": "nodemon ./src/server.ts",
     "typeorm": "ts-node-dev node_modules/typeorm/cli.js",
-    "test": "NODE_ENV=test jest",
-    "test2": "ts-node-dev --files --inspect ./pdf_printer.ts"
+    "test": "NODE_ENV=test jest"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
