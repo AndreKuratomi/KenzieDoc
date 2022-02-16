@@ -63,6 +63,19 @@ export class AppointmentsListController {
   }
 }
 
+// export class AppointmentsByPatientController {
+//   async handle(req: Request, res: Response) {
+//     try {
+//       const appointmentsListService = new AppointmentByPatientService();
+//       const list = await appointmentsListService.execute();
+
+//       return res.status(200).json(list);
+//     } catch (err: any) {
+//       return res.status(err.statusCode).json(err.message);
+//     }
+//   }
+// }
+
 export class UpdateAppointmentController {
   async handle(req: Request, res: Response) {
     const { id } = req.params;
