@@ -1,3 +1,6 @@
 .env
 node_modules
 /dist
+ormconfig.json
+ormconfig.js
+migrations/
