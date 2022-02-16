@@ -1,5 +1,4 @@
 import { Request, Response } from "express";
-import { resolve } from "path/posix";
 
 import {
   CreateAppointmentService,
@@ -16,8 +15,10 @@ export class CreateAppointmentController {
   async handle(req: Request, res: Response) {
     const createAppointmentService = new CreateAppointmentService();
     const data = req.body;
+
     try {
       const appointment = await createAppointmentService.execute(data);
+
       res.status(201).json(appointment);
     } catch (err: any) {
       return res.status(400).json({ message: err.message });

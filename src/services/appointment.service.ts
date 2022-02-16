@@ -2,6 +2,7 @@ import { AppointmentsRepository } from "../repositories/appointments.repository"
 import { getCustomRepository, LessThan, MoreThan } from "typeorm";
 import { Appointment } from "../entities";
 import { Between } from "typeorm";
+import ErrorHandler from "../utils/errors";
 
 export class CreateAppointmentService {
   async execute(data: Appointment) {
@@ -21,6 +22,10 @@ export class AppointmentsListService {
 
     const appointmentsList = await appointmentsRepository.find();
 
+    if (!appointmentsList) {
+      throw new ErrorHandler("There is no appointment listed!", 404);
+    }
+
     return appointmentsList;
   }
 }
@@ -34,7 +39,7 @@ export class UpdateAppointmentService {
     const updatedAppointment = await appointmentsRepository.findOne(id);
 
     if (!updatedAppointment) {
-      throw new Error("This professional does not exist");
+      throw new ErrorHandler("This professional does not exist", 404);
     }
 
     return updatedAppointment;
@@ -48,7 +53,7 @@ export class DeleteAppointmentService {
     const appointmentToDelete = await appointmentsRepository.findOne(id);
 
     if (!appointmentToDelete) {
-      throw new Error("This appointment does not exist");
+      throw new ErrorHandler("This appointment does not exist", 404);
     }
 
     const deletedAppointment = await appointmentsRepository.remove(
@@ -67,6 +72,10 @@ export class AppointmentByPatientService {
       where: { patient: patientId },
     });
 
+    if (!appointments) {
+      throw new ErrorHandler("There is no appointment for this patient", 404);
+    }
+
     return appointments;
   }
 }
@@ -78,6 +87,13 @@ export class AppointmentByProfessionalService {
     const appointments = await appointmentsRepository.find({
       where: { professional: professionalId },
     });
+
+    if (!appointments) {
+      throw new ErrorHandler(
+        "There is no appointment for this professional",
+        404
+      );
+    }
 
     return appointments;
   }
@@ -101,6 +117,10 @@ export class AppointmentsTomorrowService {
     const appointments = await appointmentsRepository.find({
       date: Between(tomorrow, endTomorrow),
     });
+
+    if (!appointments) {
+      throw new ErrorHandler("There is no appointment for this period", 404);
+    }
     return appointments;
   }
 }
@@ -118,6 +138,14 @@ export class WaitListService {
         date: LessThan(currentDate),
       },
     });
+
+    if (!lateAppointments) {
+      throw new ErrorHandler(
+        "There are no late appointments for this professionals!",
+        404
+      );
+    }
+
     return lateAppointments.length;
   }
 }
