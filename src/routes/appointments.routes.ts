@@ -9,6 +9,7 @@ import {
   AppointmentByProfessionalController,
   AppointmentsTomorrowController,
   WaitListController,
+  Pdf,
 } from "../controllers/appointments.controller";
 import isValidUUID from "../middlewares/uuid.middleware";
 
@@ -21,6 +22,8 @@ const appointmentByProfessionalController =
   new AppointmentByProfessionalController();
 const appointmentsTomorrowController = new AppointmentsTomorrowController();
 const waitListController = new WaitListController();
+
+const pdf = new Pdf();
 
 const appointmentsRouter = Router();
 
@@ -43,5 +46,7 @@ appointmentsRouter.delete(
   isValidUUID,
   deleteAppointmentController.handle
 );
+
+appointmentsRouter.get("/pdf", pdf.handle);
 
 export default appointmentsRouter;
