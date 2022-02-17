@@ -19,7 +19,8 @@ export class CreateAppointmentController {
     const {date} = data
     const day = date.split(" ")[0]
     const hour = date.split(" ")[1]
-    try {
+
+        try {
       const appointment = await createAppointmentService.execute(data, day, hour);
       
       res.status(201).json(appointment);
