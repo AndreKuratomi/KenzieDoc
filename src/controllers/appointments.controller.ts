@@ -19,7 +19,7 @@ export class CreateAppointmentController {
   async handle(req: Request, res: Response) {
     const createAppointmentService = new CreateAppointmentService();
     const data = req.body;
-    console.log(data);
+    // console.log(data);
     const { professional, patient, date, finished }: IAppointmentData = data;
     try {
       const dateString = date.toString();
