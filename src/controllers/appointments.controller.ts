@@ -120,9 +120,7 @@ export class AppointmentsTomorrowController {
     const appointmentsTomorrowService = new AppointmentsTomorrowService();
 
     try {
-      const appointments = await appointmentsTomorrowService.execute(
-        "2022-02-20"
-      );
+      const appointments = await appointmentsTomorrowService.execute();
 
       return res.status(200).json(appointments);
     } catch (err: any) {
@@ -137,11 +135,9 @@ export class WaitListController {
     const { crm } = req.params;
 
     try {
-      const waitListSize = await waitListService.execute(crm);
+      const waitList = await waitListService.execute(crm);
 
-      return res
-        .status(200)
-        .json({ message: `wait list size is: ${waitListSize}` });
+      return res.status(200).json(waitList);
     } catch (err: any) {
       return res.status(400).json({ message: err.message });
     }

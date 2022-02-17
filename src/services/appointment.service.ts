@@ -9,6 +9,12 @@ import { Appointment, Patient, Professional } from "../entities";
 import { Between } from "typeorm";
 import ErrorHandler from "../utils/errors";
 import { sendAppointmentEmail, sendCancelationEmail } from "./email.service";
+import {
+  formatAppointmentsTomorrow,
+  formatPatientAppointment,
+  formatProfessionalAppointment,
+  formatWaitList,
+} from "../utils/functions";
 
 export class CreateAppointmentService {
   async execute(data: Appointment, date: string, hour: string) {
@@ -34,29 +40,17 @@ export class CreateAppointmentService {
   }
 }
 
-// export class AppointmentsListService {
-//   async execute() {
-//     const appointmentsRepository = getCustomRepository(AppointmentsRepository);
-
-//     const appointmentsList = await appointmentsRepository.find();
-
-//     if (!appointmentsList) {
-//       throw new ErrorHandler("There is no appointment listed!", 404);
-//     }
-
-//     return appointmentsList;
-//   }
-// }
-
 export class AppointmentByPatientService {
   async execute(patientId: string) {
     const appointmentsRepository = getCustomRepository(AppointmentsRepository);
-
     const appointments = await appointmentsRepository.find({
       where: { patient: patientId },
+      relations: ["patient", "professional"],
     });
 
-    return appointments;
+    const result = formatPatientAppointment(appointments);
+
+    return result;
   }
 }
 
@@ -66,14 +60,17 @@ export class AppointmentByProfessionalService {
 
     const appointments = await appointmentsRepository.find({
       where: { professional: professionalId },
+      relations: ["professional", "patient"],
     });
 
-    return appointments;
+    const result = formatProfessionalAppointment(appointments);
+
+    return result;
   }
 }
 
 export class AppointmentsTomorrowService {
-  async execute(date: string) {
+  async execute() {
     const appointmentsRepository = getCustomRepository(AppointmentsRepository);
     const currentDate = new Date();
     const yearMonth =
@@ -88,10 +85,13 @@ export class AppointmentsTomorrowService {
       yearMonth + String(currentDate.getDate() + 1).padStart(2, "0") + "T20:59";
 
     const appointments = await appointmentsRepository.find({
-      date: Between(tomorrow, endTomorrow),
+      where: { date: Between(tomorrow, endTomorrow) },
+      relations: ["professional", "patient"],
     });
 
-    return appointments;
+    const result = formatAppointmentsTomorrow(appointments);
+
+    return result;
   }
 }
 
@@ -107,9 +107,12 @@ export class WaitListService {
         finished: false,
         date: LessThan(currentDate),
       },
+      relations: ["professional", "patient"],
     });
 
-    return lateAppointments.length;
+    const result = formatWaitList(lateAppointments);
+
+    return result;
   }
 }
 
@@ -119,14 +122,23 @@ export class UpdateAppointmentService {
 
     await appointmentsRepository.update(id, data);
 
-    const updatedAppointment = await appointmentsRepository.findOne(id);
+    const updatedAppointment = await appointmentsRepository.findOne(id, {
+      relations: ["professional", "patient"],
+    });
 
     if (!updatedAppointment) {
       throw new ErrorHandler("This appointment does not exist", 404);
     }
-    console.log(updatedAppointment);
 
-    return updatedAppointment;
+    const result = {
+      id: updatedAppointment.id,
+      date: updatedAppointment.date,
+      professional: updatedAppointment.professional.council_number,
+      patient: updatedAppointment.patient.cpf,
+      finished: updatedAppointment.finished,
+    };
+
+    return result;
   }
 }
 
