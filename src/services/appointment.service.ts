@@ -2,7 +2,6 @@ import { AppointmentsRepository } from "../repositories/appointments.repository"
 import { getCustomRepository, LessThan, MoreThan } from "typeorm";
 import { Appointment } from "../entities";
 import { Between } from "typeorm";
-import ErrorHandler from "../utils/errors";
 
 export class CreateAppointmentService {
   async execute(data: Appointment) {
@@ -34,7 +33,7 @@ export class UpdateAppointmentService {
 
     const updatedAppointment = await appointmentsRepository.findOne(id);
 
-    if (!updatedAppointment?.professional) {
+    if (!updatedAppointment) {
       throw new Error("This professional does not exist");
     }
 

@@ -15,7 +15,7 @@ export class CreateAdminController {
 
       return res.status(201).json(noPasswordData);
     } catch (err: any) {
-      return res.status(400).json({ message: err.message });
+      return res.status(400).json({ message: "E-mail already registered" });
     }
   }
 }
