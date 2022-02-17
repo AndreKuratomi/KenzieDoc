@@ -1,9 +1,8 @@
 import { Request, Response } from "express";
-import { resolve } from "path/posix";
 
 import {
   CreateAppointmentService,
-  AppointmentsListService,
+  // AppointmentsListService,
   UpdateAppointmentService,
   DeleteAppointmentService,
   AppointmentByPatientService,
@@ -11,18 +10,47 @@ import {
   AppointmentsTomorrowService,
   WaitListService,
 } from "../services/appointment.service";
+import ErrorHandler from "../utils/errors";
+import { IAppointmentData } from "../types";
+import { getCustomRepository } from "typeorm";
+import { AppointmentsRepository } from "../repositories/appointments.repository";
 
 export class CreateAppointmentController {
   async handle(req: Request, res: Response) {
     const createAppointmentService = new CreateAppointmentService();
     const data = req.body;
-    const {date} = data
-    const day = date.split(" ")[0]
-    const hour = date.split(" ")[1]
+    console.log(data);
+    const { professional, patient, date, finished }: IAppointmentData = data;
+    try {
+      const dateString = date.toString();
+      const day = dateString.split(" ")[0];
+      const hour = dateString.split(" ")[1];
 
-        try {
-      const appointment = await createAppointmentService.execute(data, day, hour);
-      
+      if (!professional || !patient || !date || finished === undefined) {
+        throw new ErrorHandler(
+          "One or more of the body fields is missing!",
+          400
+        );
+      }
+      if (
+        typeof professional !== "string" ||
+        typeof patient !== "string" ||
+        typeof date !== "string"
+      ) {
+        throw new ErrorHandler("This field must be typeof string!", 400);
+      }
+      if (typeof finished !== "boolean") {
+        throw new ErrorHandler("This field must be typeof boolean!", 400);
+      }
+      // const { date } = data;
+
+      // try {
+      const appointment = await createAppointmentService.execute(
+        data,
+        day,
+        hour
+      );
+
       res.status(201).json(appointment);
     } catch (err: any) {
       return res.status(400).json({ message: err.message });
@@ -30,46 +58,20 @@ export class CreateAppointmentController {
   }
 }
 
-export class AppointmentsListController {
-  async handle(req: Request, res: Response) {
-    try {
-      const appointmentsListService = new AppointmentsListService();
-      const list = await appointmentsListService.execute();
+// export class AppointmentsListController {
+//   async handle(req: Request, res: Response) {
+//     try {
+//       const appointmentsListService = new AppointmentsListService();
+//       const list = await appointmentsListService.execute();
 
-      return res.status(200).json(list);
-    } catch (err: any) {
-      return res.status(err.statusCode).json(err.message);
-    }
-  }
-}
+//       const appointment = await createAppointmentService.execute(data);
 
-export class UpdateAppointmentController {
-  async handle(req: Request, res: Response) {
-    const { id } = req.params;
-    const data = req.body;
-    const updateAppointmentService = new UpdateAppointmentService();
-    try {
-      const toUpdate = updateAppointmentService.execute(id, data);
-      return res.status(200).json(toUpdate);
-    } catch (err: any) {
-      return res.status(err.statusCode).json({ message: err.message });
-    }
-  }
-}
-
-export class DeleteAppointmentController {
-  async handle(req: Request, res: Response) {
-    const { id } = req.params;
-    try {
-      const deleteAppointmentService = new DeleteAppointmentService();
-
-      const toDelete = deleteAppointmentService.execute(id);
-      return res.status(204).json(toDelete);
-    } catch (err: any) {
-      return res.status(err.statusCode).json({ message: err.message });
-    }
-  }
-}
+//       res.status(201).json(appointment);
+//     } catch (error: any) {
+//       return res.status(error.statusCode).json({ message: error.message });
+//     }
+//   }
+// }
 
 export class AppointmentByPatientController {
   async handle(req: Request, res: Response) {
@@ -79,12 +81,19 @@ export class AppointmentByPatientController {
     try {
       const appointments = await appointmentByPatientService.execute(cpf);
 
+      if (appointments.length === 0) {
+        return res
+          .status(200)
+          .json({ message: "There are no appointments for this patient!" });
+      }
+
       return res.status(200).json(appointments);
     } catch (err: any) {
       return res.status(400).json({ message: err.message });
     }
   }
 }
+
 export class AppointmentByProfessionalController {
   async handle(req: Request, res: Response) {
     const appointmentByProfessionalService =
@@ -94,6 +103,11 @@ export class AppointmentByProfessionalController {
     try {
       const appointments = await appointmentByProfessionalService.execute(crm);
 
+      if (appointments.length === 0) {
+        return res
+          .status(200)
+          .json({ message: "There are no appointments for this professional" });
+      }
       return res.status(200).json(appointments);
     } catch (err: any) {
       return res.status(400).json({ message: err.message });
@@ -116,6 +130,7 @@ export class AppointmentsTomorrowController {
     }
   }
 }
+
 export class WaitListController {
   async handle(req: Request, res: Response) {
     const waitListService = new WaitListService();
@@ -129,6 +144,49 @@ export class WaitListController {
         .json({ message: `wait list size is: ${waitListSize}` });
     } catch (err: any) {
       return res.status(400).json({ message: err.message });
+    }
+  }
+}
+
+// export class AppointmentsListController {
+//   async handle(req: Request, res: Response) {
+//     try {
+//       const appointmentsListService = new AppointmentsListService();
+//       const list = await appointmentsListService.execute();
+
+//       return res.status(200).json(list);
+//     } catch (err: any) {
+//       return res.status(err.statusCode).json(err.message);
+//     }
+//   }
+// }
+
+export class UpdateAppointmentController {
+  async handle(req: Request, res: Response) {
+    const { id } = req.params;
+    const data = req.body;
+    const updateAppointmentService = new UpdateAppointmentService();
+
+    try {
+      const toUpdate = await updateAppointmentService.execute(id, data);
+
+      return res.status(200).json(toUpdate);
+    } catch (err: any) {
+      return res.status(400).json({ message: err.message });
+    }
+  }
+}
+
+export class DeleteAppointmentController {
+  async handle(req: Request, res: Response) {
+    const { id } = req.params;
+    try {
+      const deleteAppointmentService = new DeleteAppointmentService();
+
+      const toDelete = deleteAppointmentService.execute(id);
+      return res.status(204).json(toDelete);
+    } catch (err: any) {
+      return res.status(err.statusCode).json({ message: err.message });
     }
   }
 }
