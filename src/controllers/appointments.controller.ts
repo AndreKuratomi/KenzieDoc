@@ -1,6 +1,6 @@
-import { privateEncrypt } from "crypto";
 import { Request, Response } from "express";
-import { resolve } from "path/posix";
+
+import { PDFGenerator } from "../utils/pdfGeneretor";
 
 import {
   CreateAppointmentService,
@@ -123,6 +123,18 @@ export class WaitListController {
       return res
         .status(200)
         .json({ message: `wait list size is: ${waitListSize}` });
+    } catch (err: any) {
+      return res.status(400).json({ message: err.message });
+    }
+  }
+}
+
+export class Pdf {
+  async handle(req: Request, res: Response) {
+    try {
+      PDFGenerator();
+
+      return res.status(200).json("gerou");
     } catch (err: any) {
       return res.status(400).json({ message: err.message });
     }

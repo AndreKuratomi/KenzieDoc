@@ -2,11 +2,7 @@ import PDFPrinter from "pdfmake";
 import { TDocumentDefinitions } from "pdfmake/interfaces";
 import fs from "fs";
 
-export const PDFGeneretor = (
-  patient: any,
-  professional: any,
-  description: any
-) => {
+export const PDFGenerator = () => {
   const fonts = {
     Courier: {
       normal: "Courier",
