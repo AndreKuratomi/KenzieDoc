@@ -22,13 +22,16 @@ export class CreateAppointmentController {
     console.log(data);
     const { professional, patient, date, finished }: IAppointmentData = data;
     try {
+      const dateString = date.toString();
+      const day = dateString.split(" ")[0];
+      const hour = dateString.split(" ")[1];
+
       if (!professional || !patient || !date || finished === undefined) {
         throw new ErrorHandler(
           "One or more of the body fields is missing!",
           400
         );
       }
-
       if (
         typeof professional !== "string" ||
         typeof patient !== "string" ||
@@ -39,15 +42,36 @@ export class CreateAppointmentController {
       if (typeof finished !== "boolean") {
         throw new ErrorHandler("This field must be typeof boolean!", 400);
       }
+      // const { date } = data;
 
-      const appointment = await createAppointmentService.execute(data);
+      // try {
+      const appointment = await createAppointmentService.execute(
+        data,
+        day,
+        hour
+      );
 
       res.status(201).json(appointment);
-    } catch (error: any) {
-      return res.status(error.statusCode).json({ message: error.message });
+    } catch (err: any) {
+      return res.status(400).json({ message: err.message });
     }
   }
 }
+
+// export class AppointmentsListController {
+//   async handle(req: Request, res: Response) {
+//     try {
+//       const appointmentsListService = new AppointmentsListService();
+//       const list = await appointmentsListService.execute();
+
+//       const appointment = await createAppointmentService.execute(data);
+
+//       res.status(201).json(appointment);
+//     } catch (error: any) {
+//       return res.status(error.statusCode).json({ message: error.message });
+//     }
+//   }
+// }
 
 export class AppointmentByPatientController {
   async handle(req: Request, res: Response) {
