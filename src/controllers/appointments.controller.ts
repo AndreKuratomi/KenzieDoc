@@ -4,7 +4,7 @@ import { PDFGenerator } from "../utils/pdfGeneretor";
 
 import {
   CreateAppointmentService,
-  AppointmentsListService,
+  // AppointmentsListService,
   UpdateAppointmentService,
   DeleteAppointmentService,
   AppointmentByPatientService,
@@ -26,18 +26,18 @@ export class CreateAppointmentController {
   }
 }
 
-export class AppointmentsListController {
-  async handle(req: Request, res: Response) {
-    try {
-      const appointmentsListService = new AppointmentsListService();
-      const list = await appointmentsListService.execute();
+// export class AppointmentsListController {
+//   async handle(req: Request, res: Response) {
+//     try {
+//       const appointmentsListService = new AppointmentsListService();
+//       const list = await appointmentsListService.execute();
 
-      return res.status(200).json(list);
-    } catch (err: any) {
-      return res.status(err.statusCode).json(err.message);
-    }
-  }
-}
+//       return res.status(200).json(list);
+//     } catch (err: any) {
+//       return res.status(err.statusCode).json(err.message);
+//     }
+//   }
+// }
 
 export class UpdateAppointmentController {
   async handle(req: Request, res: Response) {
@@ -102,9 +102,7 @@ export class AppointmentsTomorrowController {
     const appointmentsTomorrowService = new AppointmentsTomorrowService();
 
     try {
-      const appointments = await appointmentsTomorrowService.execute(
-        "2022-02-20"
-      );
+      const appointments = await appointmentsTomorrowService.execute();
 
       return res.status(200).json(appointments);
     } catch (err: any) {
@@ -118,11 +116,9 @@ export class WaitListController {
     const { crm } = req.params;
 
     try {
-      const waitListSize = await waitListService.execute(crm);
+      const waitList = await waitListService.execute(crm);
 
-      return res
-        .status(200)
-        .json({ message: `wait list size is: ${waitListSize}` });
+      return res.status(200).json(waitList);
     } catch (err: any) {
       return res.status(400).json({ message: err.message });
     }

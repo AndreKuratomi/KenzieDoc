@@ -1,7 +1,20 @@
 import { AppointmentsRepository } from "../repositories/appointments.repository";
-import { getCustomRepository, LessThan, MoreThan } from "typeorm";
-import { Appointment } from "../entities";
+import {
+  getCustomRepository,
+  getRepository,
+  LessThan,
+  MoreThan,
+} from "typeorm";
+import { Appointment, Patient, Professional } from "../entities";
 import { Between } from "typeorm";
+import ErrorHandler from "../utils/errors";
+import { sendAppointmentEmail, sendCancelationEmail } from "./email.service";
+import {
+  formatAppointmentsTomorrow,
+  formatPatientAppointment,
+  formatProfessionalAppointment,
+  formatWaitList,
+} from "../utils/functions";
 
 export class CreateAppointmentService {
   async execute(data: Appointment) {
@@ -15,59 +28,17 @@ export class CreateAppointmentService {
   }
 }
 
-export class AppointmentsListService {
-  async execute() {
-    const appointmentsRepository = getCustomRepository(AppointmentsRepository);
-
-    const appointmentsList = await appointmentsRepository.find();
-
-    return appointmentsList;
-  }
-}
-
-export class UpdateAppointmentService {
-  async execute(id: string, data: Appointment) {
-    const appointmentsRepository = getCustomRepository(AppointmentsRepository);
-
-    await appointmentsRepository.update(id, data);
-
-    const updatedAppointment = await appointmentsRepository.findOne(id);
-
-    if (!updatedAppointment) {
-      throw new Error("This professional does not exist");
-    }
-
-    return updatedAppointment;
-  }
-}
-
-export class DeleteAppointmentService {
-  async execute(id: string) {
-    const appointmentsRepository = getCustomRepository(AppointmentsRepository);
-
-    const appointmentToDelete = await appointmentsRepository.findOne(id);
-
-    if (!appointmentToDelete) {
-      throw new Error("This appointment does not exist");
-    }
-
-    const deletedAppointment = await appointmentsRepository.remove(
-      appointmentToDelete
-    );
-
-    return deletedAppointment;
-  }
-}
-
 export class AppointmentByPatientService {
   async execute(patientId: string) {
     const appointmentsRepository = getCustomRepository(AppointmentsRepository);
-
     const appointments = await appointmentsRepository.find({
       where: { patient: patientId },
+      relations: ["patient", "professional"],
     });
 
-    return appointments;
+    const result = formatPatientAppointment(appointments);
+
+    return result;
   }
 }
 
@@ -77,14 +48,17 @@ export class AppointmentByProfessionalService {
 
     const appointments = await appointmentsRepository.find({
       where: { professional: professionalId },
+      relations: ["professional", "patient"],
     });
 
-    return appointments;
+    const result = formatProfessionalAppointment(appointments);
+
+    return result;
   }
 }
 
 export class AppointmentsTomorrowService {
-  async execute(date: string) {
+  async execute() {
     const appointmentsRepository = getCustomRepository(AppointmentsRepository);
     const currentDate = new Date();
     const yearMonth =
@@ -99,9 +73,13 @@ export class AppointmentsTomorrowService {
       yearMonth + String(currentDate.getDate() + 1).padStart(2, "0") + "T20:59";
 
     const appointments = await appointmentsRepository.find({
-      date: Between(tomorrow, endTomorrow),
+      where: { date: Between(tomorrow, endTomorrow) },
+      relations: ["professional", "patient"],
     });
-    return appointments;
+
+    const result = formatAppointmentsTomorrow(appointments);
+
+    return result;
   }
 }
 
@@ -117,7 +95,76 @@ export class WaitListService {
         finished: false,
         date: LessThan(currentDate),
       },
+      relations: ["professional", "patient"],
     });
-    return lateAppointments.length;
+
+    const result = formatWaitList(lateAppointments);
+
+    return result;
+  }
+}
+
+export class UpdateAppointmentService {
+  async execute(id: string, data: Appointment) {
+    const appointmentsRepository = getCustomRepository(AppointmentsRepository);
+
+    await appointmentsRepository.update(id, data);
+
+    const updatedAppointment = await appointmentsRepository.findOne(id, {
+      relations: ["professional", "patient"],
+    });
+
+    if (!updatedAppointment) {
+      throw new ErrorHandler("This appointment does not exist", 404);
+    }
+
+    const result = {
+      id: updatedAppointment.id,
+      date: updatedAppointment.date,
+      professional: updatedAppointment.professional.council_number,
+      patient: updatedAppointment.patient.cpf,
+      finished: updatedAppointment.finished,
+    };
+
+    return result;
+  }
+}
+
+export class DeleteAppointmentService {
+  async execute(id: string) {
+    const appointmentsRepository = getCustomRepository(AppointmentsRepository);
+    //
+    const patientRepo = getRepository(Patient);
+    const proRepo = getRepository(Professional);
+
+    const appointmentToDelete = await appointmentsRepository.findOne(id, {
+      relations: ["professional", "patient"],
+    });
+    const user = await patientRepo.findOne({
+      where: { cpf: appointmentToDelete?.patient.cpf },
+    });
+    const medic = await proRepo.findOne({
+      where: {
+        council_number: appointmentToDelete?.professional.council_number,
+      },
+    });
+    const name: any = user?.name;
+    const mail: any = user?.email;
+    const medicName: any = medic?.name;
+    const specialty: any = medic?.specialty;
+    const appointmentDate: any = appointmentToDelete?.date;
+    const date: any = appointmentDate;
+
+    if (!appointmentToDelete) {
+      throw new Error("This appointment does not exist");
+    }
+
+    sendCancelationEmail(name, medicName, mail, specialty, date);
+
+    const deletedAppointment = await appointmentsRepository.remove(
+      appointmentToDelete
+    );
+
+    return deletedAppointment;
   }
 }
