@@ -2,6 +2,7 @@ import { Router } from "express";
 import {
   CreateProfessionalController,
   DeleteProfessionalController,
+  ProfessionalByIdController,
   ProfessionalsListController,
   UpdateProfessionalController,
 } from "../controllers/professional.controller";
@@ -13,6 +14,7 @@ const createProfessionalController = new CreateProfessionalController();
 const updateProfessionalController = new UpdateProfessionalController();
 const deleteProfessionalionalController = new DeleteProfessionalController();
 const professionalListController = new ProfessionalsListController();
+const professionalByIdController = new ProfessionalByIdController();
 
 const professionalsRouter = Router();
 
@@ -22,6 +24,12 @@ professionalsRouter.get(
   authenticated,
   verifyAdmin,
   professionalListController.handle
+);
+professionalsRouter.get(
+  "/:id",
+  authenticated,
+  verifyAccount,
+  professionalByIdController.handle
 );
 professionalsRouter.patch(
   "/:id",
