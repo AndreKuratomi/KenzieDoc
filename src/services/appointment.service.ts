@@ -1,86 +1,52 @@
 import { AppointmentsRepository } from "../repositories/appointments.repository";
-import { getCustomRepository, getRepository, LessThan, MoreThan } from "typeorm";
+import {
+  getCustomRepository,
+  getRepository,
+  LessThan,
+  MoreThan,
+} from "typeorm";
 import { Appointment, Patient, Professional } from "../entities";
 import { Between } from "typeorm";
+import ErrorHandler from "../utils/errors";
 import { sendAppointmentEmail, sendCancelationEmail } from "./email.service";
 
 export class CreateAppointmentService {
-  async execute(data: Appointment, date: string, hour:string) {
-    const patientRepo = getRepository(Patient)
-    const proRepo = getRepository(Professional)
-    const user = await patientRepo.findOne({where: {cpf : data.patient}})
-    const medic = await proRepo.findOne({where: {council_number : data.professional}})
-    const name: any = user?.name
-    const mail: any = user?.email
-    const medicName: any = medic?.name
-    const specialty: any = medic?.specialty
+  async execute(data: Appointment, date: string, hour: string) {
+    const patientRepo = getRepository(Patient);
+    const proRepo = getRepository(Professional);
+    const user = await patientRepo.findOne({ where: { cpf: data.patient } });
+    const medic = await proRepo.findOne({
+      where: { council_number: data.professional },
+    });
+    const name: any = user?.name;
+    const mail: any = user?.email;
+    const medicName: any = medic?.name;
+    const specialty: any = medic?.specialty;
     const appointmentsRepository = getCustomRepository(AppointmentsRepository);
 
     const newAppointment = appointmentsRepository.create(data);
 
     await appointmentsRepository.save(newAppointment);
 
-    await sendAppointmentEmail(name, medicName, mail, specialty, date, hour)
+    await sendAppointmentEmail(name, medicName, mail, specialty, date, hour);
 
     return newAppointment;
   }
 }
 
-export class AppointmentsListService {
-  async execute() {
-    const appointmentsRepository = getCustomRepository(AppointmentsRepository);
+// export class AppointmentsListService {
+//   async execute() {
+//     const appointmentsRepository = getCustomRepository(AppointmentsRepository);
 
-    const appointmentsList = await appointmentsRepository.find();
+//     const appointmentsList = await appointmentsRepository.find();
 
-    return appointmentsList;
-  }
-}
+//     if (!appointmentsList) {
+//       throw new ErrorHandler("There is no appointment listed!", 404);
+//     }
 
-export class UpdateAppointmentService {
-  async execute(id: string, data: Appointment) {
-    const appointmentsRepository = getCustomRepository(AppointmentsRepository);
-
-    await appointmentsRepository.update(id, data);
-
-    const updatedAppointment = await appointmentsRepository.findOne(id);
-
-    if (!updatedAppointment) {
-      throw new Error("This professional does not exist");
-    }
-
-    return updatedAppointment;
-  }
-}
-
-export class DeleteAppointmentService {
-  async execute(id: string) {
-    const appointmentsRepository = getCustomRepository(AppointmentsRepository);
-      const patientRepo = getRepository(Patient)
-      const proRepo = getRepository(Professional)
-
-    const appointmentToDelete = await appointmentsRepository.findOne(id, {relations: ["professional", "patient"]});
-    const user = await patientRepo.findOne({where: {cpf : appointmentToDelete?.patient.cpf}})
-    const medic = await proRepo.findOne({where: {council_number : appointmentToDelete?.professional.council_number}})
-    const name: any = user?.name
-    const mail: any = user?.email
-    const medicName: any = medic?.name
-    const specialty: any = medic?.specialty
-    const appointmentDate:any = appointmentToDelete?.date
-    const date:any = appointmentDate
-    
-    if (!appointmentToDelete) {
-      throw new Error("This appointment does not exist");
-    }
-
-    sendCancelationEmail(name, medicName, mail, specialty, date)
-
-    const deletedAppointment = await appointmentsRepository.remove(
-      appointmentToDelete
-    );
-
-    return deletedAppointment;
-  }
-}
+//     return appointmentsList;
+//   }
+// }
 
 export class AppointmentByPatientService {
   async execute(patientId: string) {
@@ -124,6 +90,7 @@ export class AppointmentsTomorrowService {
     const appointments = await appointmentsRepository.find({
       date: Between(tomorrow, endTomorrow),
     });
+
     return appointments;
   }
 }
@@ -141,6 +108,63 @@ export class WaitListService {
         date: LessThan(currentDate),
       },
     });
+
     return lateAppointments.length;
+  }
+}
+
+export class UpdateAppointmentService {
+  async execute(id: string, data: Appointment) {
+    const appointmentsRepository = getCustomRepository(AppointmentsRepository);
+
+    await appointmentsRepository.update(id, data);
+
+    const updatedAppointment = await appointmentsRepository.findOne(id);
+
+    if (!updatedAppointment) {
+      throw new ErrorHandler("This appointment does not exist", 404);
+    }
+    console.log(updatedAppointment);
+
+    return updatedAppointment;
+  }
+}
+
+export class DeleteAppointmentService {
+  async execute(id: string) {
+    const appointmentsRepository = getCustomRepository(AppointmentsRepository);
+    //
+    const patientRepo = getRepository(Patient);
+    const proRepo = getRepository(Professional);
+
+    const appointmentToDelete = await appointmentsRepository.findOne(id, {
+      relations: ["professional", "patient"],
+    });
+    const user = await patientRepo.findOne({
+      where: { cpf: appointmentToDelete?.patient.cpf },
+    });
+    const medic = await proRepo.findOne({
+      where: {
+        council_number: appointmentToDelete?.professional.council_number,
+      },
+    });
+    const name: any = user?.name;
+    const mail: any = user?.email;
+    const medicName: any = medic?.name;
+    const specialty: any = medic?.specialty;
+    const appointmentDate: any = appointmentToDelete?.date;
+    const date: any = appointmentDate;
+
+    if (!appointmentToDelete) {
+      throw new Error("This appointment does not exist");
+    }
+
+    sendCancelationEmail(name, medicName, mail, specialty, date);
+
+    const deletedAppointment = await appointmentsRepository.remove(
+      appointmentToDelete
+    );
+
+    return deletedAppointment;
   }
 }
