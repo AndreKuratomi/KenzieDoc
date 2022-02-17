@@ -12,29 +12,28 @@ export class CreatePatientService {
     const emailAlreadyExists = await patientsRepository.findOne({
       where: {
         email: data.email,
-      }
+      },
     });
 
     const cpfAlreadyExists = await patientsRepository.findOne({
       where: {
         cpf: data.cpf,
-      }
-    })
+      },
+    });
 
     if (cpfAlreadyExists) {
-      throw new ErrorHandler("User already registered!", 409)
+      throw new ErrorHandler("User already registered!", 409);
     }
 
     if (emailAlreadyExists) {
-      throw new ErrorHandler("Email already registered!", 409)
+      throw new ErrorHandler("Email already registered!", 409);
     }
 
     const newPatient = patientsRepository.create(data);
 
     await patientsRepository.save(newPatient);
 
-    const {password: data_password, ...newData} = newPatient
-
+    const { password: data_password, ...newData } = newPatient;
 
     return newData;
   }
@@ -65,6 +64,7 @@ export class UpdatePatientService {
     return updatedPatient;
   }
 }
+
 export class DeletePatientService {
   async execute(cpf: string) {
     const patientsRepository = getCustomRepository(PatientsRepository);
