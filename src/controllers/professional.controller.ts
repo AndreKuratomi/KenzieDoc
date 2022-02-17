@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import {
   CreateProfessionalService,
   DeleteProfessionalService,
+  ProfessionalByIdService,
   ProfessionalsListService,
   UpdateProfessionalService,
 } from "../services/professional.service";
@@ -63,6 +64,21 @@ export class DeleteProfessionalController {
       const user = await deleteProfessionalService.execute(id);
 
       return res.status(200).json(user);
+    } catch (err: any) {
+      return res.status(400).json({ message: err.message });
+    }
+  }
+}
+
+export class ProfessionalByIdController {
+  async handle(req: Request, res: Response) {
+    const professionalByIdService = new ProfessionalByIdService();
+    const { id } = req.params;
+
+    try {
+      const professional = await professionalByIdService.execute(id);
+
+      return res.status(200).json(professional);
     } catch (err: any) {
       return res.status(400).json({ message: err.message });
     }
