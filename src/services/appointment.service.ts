@@ -1,15 +1,27 @@
 import { AppointmentsRepository } from "../repositories/appointments.repository";
-import { getCustomRepository, LessThan, MoreThan } from "typeorm";
-import { Appointment } from "../entities";
+import { getCustomRepository, getRepository, LessThan, MoreThan } from "typeorm";
+import { Appointment, Patient, Professional } from "../entities";
 import { Between } from "typeorm";
+import { sendAppointmentEmail } from "./email.service";
 
 export class CreateAppointmentService {
-  async execute(data: Appointment) {
+  async execute(data: Appointment, date: string, hour:string) {
+    const patientRepo = getRepository(Patient)
+    const proRepo = getRepository(Professional)
+
+    const user = await patientRepo.findOne({where: {cpf : data.patient}})
+    const medic = await proRepo.findOne({where: {council_number : data.professional}})
+    const name: any = user?.name
+    const mail: any = user?.email
+    const medicName: any = medic?.name
+    const specialty: any = medic?.specialty
     const appointmentsRepository = getCustomRepository(AppointmentsRepository);
 
     const newAppointment = appointmentsRepository.create(data);
 
     await appointmentsRepository.save(newAppointment);
+
+    await sendAppointmentEmail(name, medicName, mail, specialty, date, hour)
 
     return newAppointment;
   }
