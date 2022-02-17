@@ -10,41 +10,17 @@ import {
   AppointmentsTomorrowService,
   WaitListService,
 } from "../services/appointment.service";
-import ErrorHandler from "../utils/errors";
-import { IAppointmentData } from "../types";
-import { getCustomRepository } from "typeorm";
-import { AppointmentsRepository } from "../repositories/appointments.repository";
 
 export class CreateAppointmentController {
   async handle(req: Request, res: Response) {
     const createAppointmentService = new CreateAppointmentService();
     const data = req.body;
+    const { date } = data;
 
-    const { professional, patient, date, finished }: IAppointmentData = data;
     try {
-      const dateString = date.toString();
-      const day = dateString.split(" ")[0];
-      const hour = dateString.split(" ")[1];
+      const day = date.split(" ")[0];
+      const hour = date.split(" ")[1];
 
-      if (!professional || !patient || !date || finished === undefined) {
-        throw new ErrorHandler(
-          "One or more of the body fields is missing!",
-          400
-        );
-      }
-      if (
-        typeof professional !== "string" ||
-        typeof patient !== "string" ||
-        typeof date !== "string"
-      ) {
-        throw new ErrorHandler("This field must be typeof string!", 400);
-      }
-      if (typeof finished !== "boolean") {
-        throw new ErrorHandler("This field must be typeof boolean!", 400);
-      }
-      // const { date } = data;
-
-      // try {
       const appointment = await createAppointmentService.execute(
         data,
         day,
@@ -57,21 +33,6 @@ export class CreateAppointmentController {
     }
   }
 }
-
-// export class AppointmentsListController {
-//   async handle(req: Request, res: Response) {
-//     try {
-//       const appointmentsListService = new AppointmentsListService();
-//       const list = await appointmentsListService.execute();
-
-//       const appointment = await createAppointmentService.execute(data);
-
-//       res.status(201).json(appointment);
-//     } catch (error: any) {
-//       return res.status(error.statusCode).json({ message: error.message });
-//     }
-//   }
-// }
 
 export class AppointmentByPatientController {
   async handle(req: Request, res: Response) {
