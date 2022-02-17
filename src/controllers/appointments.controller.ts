@@ -45,7 +45,7 @@ export class UpdateAppointmentController {
     const data = req.body;
     const updateAppointmentService = new UpdateAppointmentService();
     try {
-      const toUpdate = updateAppointmentService.execute(id, data);
+      const toUpdate = await updateAppointmentService.execute(id, data);
       return res.status(200).json(toUpdate);
     } catch (err: any) {
       return res.status(err.statusCode).json({ message: err.message });
