@@ -17,9 +17,9 @@ import {
 } from "../utils/functions";
 
 export class CreateAppointmentService {
-  async execute(data: Appointment) {
+  async execute(data: Appointment, day: string, hour: string) {
     const appointmentsRepository = getCustomRepository(AppointmentsRepository);
-    
+
     const newAppointment = appointmentsRepository.create(data);
     await appointmentsRepository.save(newAppointment);
 
@@ -151,8 +151,8 @@ export class DeleteAppointmentService {
     const mail: any = user?.email;
     const medicName: any = medic?.name;
     const specialty: any = medic?.specialty;
-    const date:any = appointmentToDelete?.date.toLocaleDateString()
-    const hour:any = appointmentToDelete?.date.toLocaleTimeString()
+    const date: any = appointmentToDelete?.date.toLocaleDateString();
+    const hour: any = appointmentToDelete?.date.toLocaleTimeString();
 
     if (!appointmentToDelete) {
       throw new Error("This appointment does not exist");
