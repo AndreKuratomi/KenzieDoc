@@ -20,9 +20,10 @@ export class CreateProfessionalService {
       data.council_number
     );
 
-    const emailExists = await professionalsRepository.find({
+    const emailExists = await professionalsRepository.findOne({
       where: { email: data.email },
     });
+    console.log(emailExists);
     if (professionalExists) {
       throw new Error("A professional with this council number already exists");
     }
