@@ -101,6 +101,7 @@ export class AppointmentsTomorrowController {
 
       return res.status(200).json(appointments);
     } catch (err: any) {
+      console.log(err);
       return res.status(400).json({ message: err.message });
     }
   }
