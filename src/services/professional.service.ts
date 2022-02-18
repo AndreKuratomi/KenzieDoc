@@ -20,21 +20,15 @@ export class CreateProfessionalService {
       data.council_number
     );
 
-    if (
-      data.email.match(/\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b/) ==
-      null
-    ) {
-      throw new Error("Invalid email");
-    }
-    if (data.council_number.match(/[0-9]{3,5}-[A-Z]{2}/) == null) {
-      throw new Error("Invalid council number. Correct format: 00000-XX");
-    }
-    if (data.phone.match(/\(\d{2,}\)\d{4,}\-\d{4}/) == null) {
-      throw new Error("Invalid phone number. Correct format: (xx)xxxxx-xxxx");
-    }
+    const emailExists = await professionalsRepository.find({
+      where: { email: data.email },
+    });
 
     if (professionalExists) {
       throw new Error("A professional with this council number already exists");
+    }
+    if (emailExists) {
+      throw new Error("A professional with this email already exists");
     }
     const newProfessional = professionalsRepository.create(data);
 
