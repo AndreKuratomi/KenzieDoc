@@ -1,4 +1,4 @@
-import express from "express";
+import express, { Request, Response } from "express";
 import router from "./routes";
 import { handleError } from "./middlewares/errors.middlewares";
 import swaggerUiExpress from "swagger-ui-express";
