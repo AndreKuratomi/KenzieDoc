@@ -59,7 +59,8 @@ export class AppointmentByProfessionalController {
   async handle(req: Request, res: Response) {
     const appointmentByProfessionalService =
       new AppointmentByProfessionalService();
-    const { crm } = req.params;
+    let { crm } = req.params;
+    crm = crm.toUpperCase();
 
     try {
       const appointments = await appointmentByProfessionalService.execute(crm);
@@ -93,7 +94,8 @@ export class AppointmentsTomorrowController {
 export class WaitListController {
   async handle(req: Request, res: Response) {
     const waitListService = new WaitListService();
-    const { crm } = req.params;
+    let { crm } = req.params;
+    crm = crm.toUpperCase();
 
     try {
       const waitList = await waitListService.execute(crm);
@@ -104,19 +106,6 @@ export class WaitListController {
     }
   }
 }
-
-// export class AppointmentsListController {
-//   async handle(req: Request, res: Response) {
-//     try {
-//       const appointmentsListService = new AppointmentsListService();
-//       const list = await appointmentsListService.execute();
-
-//       return res.status(200).json(list);
-//     } catch (err: any) {
-//       return res.status(err.statusCode).json(err.message);
-//     }
-//   }
-// }
 
 export class UpdateAppointmentController {
   async handle(req: Request, res: Response) {
