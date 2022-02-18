@@ -12,6 +12,8 @@ import {
   Pdf,
 } from "../controllers/appointments.controller";
 import isValidUUID from "../middlewares/uuid.middleware";
+import { validateSchema } from "../middlewares/validate.schema.middleware";
+import { AppointmentSchema } from "../schemas/appointments.schema";
 
 const createAppointmentController = new CreateAppointmentController();
 // const appointmentsListController = new AppointmentsListController();
@@ -27,7 +29,11 @@ const pdf = new Pdf();
 
 const appointmentsRouter = Router();
 
-appointmentsRouter.post("", createAppointmentController.handle);
+appointmentsRouter.post(
+  "",
+  validateSchema(AppointmentSchema),
+  createAppointmentController.handle
+);
 appointmentsRouter.get("/patient/:cpf", appointmentByPatientController.handle);
 appointmentsRouter.get(
   "/professional/:crm",

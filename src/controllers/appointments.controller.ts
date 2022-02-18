@@ -4,7 +4,6 @@ import { PDFGenerator } from "../utils/pdfGeneretor";
 
 import {
   CreateAppointmentService,
-  // AppointmentsListService,
   UpdateAppointmentService,
   DeleteAppointmentService,
   AppointmentByPatientService,
@@ -17,27 +16,23 @@ export class CreateAppointmentController {
   async handle(req: Request, res: Response) {
     const createAppointmentService = new CreateAppointmentService();
     const data = req.body;
+    const { date } = data;
+
     try {
-      const appointment = await createAppointmentService.execute(data);
+      const day = date.split(" ")[0];
+      const hour = date.split(" ")[1];
+
+      const appointment = await createAppointmentService.execute(
+        data,
+        day,
+        hour
+      );
       res.status(201).json(appointment);
     } catch (err: any) {
       return res.status(400).json({ message: err.message });
     }
   }
 }
-
-// export class AppointmentsListController {
-//   async handle(req: Request, res: Response) {
-//     try {
-//       const appointmentsListService = new AppointmentsListService();
-//       const list = await appointmentsListService.execute();
-
-//       return res.status(200).json(list);
-//     } catch (err: any) {
-//       return res.status(err.statusCode).json(err.message);
-//     }
-//   }
-// }
 
 export class UpdateAppointmentController {
   async handle(req: Request, res: Response) {
