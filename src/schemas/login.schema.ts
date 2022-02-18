@@ -10,5 +10,5 @@ export const LoginSchema = yup.object().shape({
     .typeError("The field 'password' must be typeof string!")
     .strict(true)
     .required("'password' is a required field!")
-    .min(4, "Minimun 4 digits!"),
+    .min(4, "Minimun 4 digits for password!"),
 });

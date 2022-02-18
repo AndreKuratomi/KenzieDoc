@@ -12,11 +12,15 @@ export class Appointment {
   @PrimaryGeneratedColumn("uuid")
   id!: string;
 
-  @ManyToOne(() => Professional, professional => professional.appointments, {cascade: true})
+  @ManyToOne(() => Professional, (professional) => professional.appointments, {
+    cascade: true,
+  })
   @JoinColumn()
   professional!: Professional;
 
-  @ManyToOne(() => Patient, patient => patient.appointments, {cascade: true})
+  @ManyToOne(() => Patient, (patient) => patient.appointments, {
+    cascade: true,
+  })
   @JoinColumn()
   patient!: Patient;
 
