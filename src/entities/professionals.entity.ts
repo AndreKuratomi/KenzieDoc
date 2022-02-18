@@ -3,7 +3,7 @@ import { Appointment } from ".";
 
 @Entity()
 export class Professional {
-  @PrimaryColumn()
+  @PrimaryColumn({ unique: true })
   council_number: string;
 
   @Column()

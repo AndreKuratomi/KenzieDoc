@@ -1,39 +1,51 @@
 import { Request, Response } from "express";
-import { resolve } from "path/posix";
-
+import { PDFGenerator } from "../utils/pdfGeneretor";
 import {
   CreateAppointmentService,
-  AppointmentsListService,
   UpdateAppointmentService,
   DeleteAppointmentService,
   AppointmentByPatientService,
   AppointmentByProfessionalService,
   AppointmentsTomorrowService,
   WaitListService,
+  prescriptionPdf,
 } from "../services/appointment.service";
+import { getCustomRepository } from "typeorm";
+import PatientRepository from "../repositories/patients.repository";
+import ProfessionalRepository from "../repositories/professionals.repository";
+import { sendAppointmentEmail } from "../services/email.service";
 
 export class CreateAppointmentController {
   async handle(req: Request, res: Response) {
     const createAppointmentService = new CreateAppointmentService();
     const data = req.body;
+    const { date } = data;
+    const patientRepo = getCustomRepository(PatientRepository);
+    const proRepo = getCustomRepository(ProfessionalRepository);
+    const user = await patientRepo.findOne({ where: { cpf: data.patient } });
+    const medic = await proRepo.findOne({
+      where: { council_number: data.professional },
+    });
+    const name: any = user?.name;
+    const mail: any = user?.email;
+    const medicName: any = medic?.name;
+    const specialty: any = medic?.specialty;
+
     try {
-      const appointment = await createAppointmentService.execute(data);
+      const day = date.split(" ")[0];
+      const hour = date.split(" ")[1];
+
+      const appointment = await createAppointmentService.execute(
+        data,
+        day,
+        hour
+      );
+
+      await sendAppointmentEmail(name, medicName, mail, specialty, date, hour);
+
       res.status(201).json(appointment);
     } catch (err: any) {
       return res.status(400).json({ message: err.message });
-    }
-  }
-}
-
-export class AppointmentsListController {
-  async handle(req: Request, res: Response) {
-    try {
-      const appointmentsListService = new AppointmentsListService();
-      const list = await appointmentsListService.execute();
-
-      return res.status(200).json(list);
-    } catch (err: any) {
-      return res.status(err.statusCode).json(err.message);
     }
   }
 }
@@ -44,7 +56,7 @@ export class UpdateAppointmentController {
     const data = req.body;
     const updateAppointmentService = new UpdateAppointmentService();
     try {
-      const toUpdate = updateAppointmentService.execute(id, data);
+      const toUpdate = await updateAppointmentService.execute(id, data);
       return res.status(200).json(toUpdate);
     } catch (err: any) {
       return res.status(err.statusCode).json({ message: err.message });
@@ -84,7 +96,8 @@ export class AppointmentByProfessionalController {
   async handle(req: Request, res: Response) {
     const appointmentByProfessionalService =
       new AppointmentByProfessionalService();
-    const { crm } = req.params;
+    let { crm } = req.params;
+    crm = crm.toUpperCase();
 
     try {
       const appointments = await appointmentByProfessionalService.execute(crm);
@@ -101,12 +114,11 @@ export class AppointmentsTomorrowController {
     const appointmentsTomorrowService = new AppointmentsTomorrowService();
 
     try {
-      const appointments = await appointmentsTomorrowService.execute(
-        "2022-02-20"
-      );
+      const appointments = await appointmentsTomorrowService.execute();
 
       return res.status(200).json(appointments);
     } catch (err: any) {
+      console.log(err);
       return res.status(400).json({ message: err.message });
     }
   }
@@ -114,14 +126,25 @@ export class AppointmentsTomorrowController {
 export class WaitListController {
   async handle(req: Request, res: Response) {
     const waitListService = new WaitListService();
-    const { crm } = req.params;
+    let { crm } = req.params;
+    crm = crm.toUpperCase();
 
     try {
-      const waitListSize = await waitListService.execute(crm);
+      const waitList = await waitListService.execute(crm);
 
-      return res
-        .status(200)
-        .json({ message: `wait list size is: ${waitListSize}` });
+      return res.status(200).json(waitList);
+    } catch (err: any) {
+      return res.status(400).json({ message: err.message });
+    }
+  }
+}
+
+export class Pdf {
+  async handle(req: Request, res: Response) {
+    try {
+      PDFGenerator();
+
+      return res.status(200).json("gerou");
     } catch (err: any) {
       return res.status(400).json({ message: err.message });
     }
