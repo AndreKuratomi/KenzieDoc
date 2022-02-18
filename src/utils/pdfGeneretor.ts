@@ -20,18 +20,6 @@ export const PDFGenerator = () => {
         text: "Nome do paciente)\n\n",
         style: "header",
       },
-      // {
-      //   text: [
-      //     "N ",
-      //     "to the paragraph (instead of a single string) and have ",
-      //     { text: "a better ", fontSize: 15, bold: true },
-      //     "control over it. \nEach inline can be ",
-      //     { text: "styled ", fontSize: 20 },
-      //     { text: "independently ", italics: true, fontSize: 40 },
-      //     "then.\n\n",
-      //   ],
-      // },
-      // { text: "Titulo", style: "header" },
       {
         style: "bigger",
         italics: false,
