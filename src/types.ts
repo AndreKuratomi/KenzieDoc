@@ -75,3 +75,8 @@ interface IWaitList {
     email: string;
   };
 }
+
+export interface IProfessionalSpecialty {
+  council_number: string;
+  name: string;
+}

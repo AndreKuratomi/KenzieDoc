@@ -4,6 +4,7 @@ import { Professional } from "../entities";
 import bcryptjs from "bcryptjs";
 import {
   checkUpdateProfessional,
+  formatProfessionalSpecialty,
   onlyNonSensitive,
   title,
 } from "../utils/functions";
@@ -27,7 +28,7 @@ export class CreateProfessionalService {
     const emailExists = await professionalsRepository.findOne({
       where: { email: data.email },
     });
-    console.log(emailExists);
+
     if (professionalExists) {
       throw new Error("A professional with this council number already exists");
     }
@@ -61,12 +62,13 @@ export class UpdateProfessionalService {
     const professionalsRepository = getCustomRepository(
       ProfessionalsRepository
     );
+    let upperId = id.toUpperCase();
 
     checkUpdateProfessional(data);
 
-    await professionalsRepository.update(id, data);
+    await professionalsRepository.update(upperId, data);
 
-    const updatedProfessional = await professionalsRepository.findOne(id);
+    const updatedProfessional = await professionalsRepository.findOne(upperId);
 
     if (!updatedProfessional) {
       throw new Error("This professional does not exist");
@@ -131,6 +133,25 @@ export class ProfessionalByIdService {
       };
       result.appointments.push(newApp);
     });
+    return result;
+  }
+}
+
+export class ProfessionalBySpecialtyService {
+  async execute(specialty: string) {
+    const professionalsRepository = getCustomRepository(
+      ProfessionalsRepository
+    );
+
+    const specialtyList = await professionalsRepository.find({
+      where: { specialty: specialty },
+    });
+
+    const result = {
+      specialty: specialty,
+      professionals: formatProfessionalSpecialty(specialtyList),
+    };
+
     return result;
   }
 }

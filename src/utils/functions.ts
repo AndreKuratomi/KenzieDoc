@@ -4,6 +4,7 @@ import {
   IAppointmentsProfessionalResult,
   IAppointmentsTomorrowResult,
   IAppointmentWaitListResult,
+  IProfessionalSpecialty,
 } from "../types";
 import bcryptjs from "bcryptjs";
 
@@ -155,4 +156,16 @@ export const checkUpdateProfessional = async (data: Professional) => {
       throw new Error("Invalid phone number. Correct format: (xx)xxxxx-xxxx");
     }
   }
+};
+
+export const formatProfessionalSpecialty = (professionals: Professional[]) => {
+  let specialtyList: IProfessionalSpecialty[] = [];
+  professionals.forEach((prof) => {
+    specialtyList.push({
+      council_number: prof.council_number,
+      name: prof.name,
+    });
+  });
+
+  return specialtyList;
 };

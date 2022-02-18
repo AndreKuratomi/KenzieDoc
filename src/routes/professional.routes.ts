@@ -3,6 +3,7 @@ import {
   CreateProfessionalController,
   DeleteProfessionalController,
   ProfessionalByIdController,
+  ProfessionalBySpecialtyController,
   ProfessionalsListController,
   UpdateProfessionalController,
 } from "../controllers/professional.controller";
@@ -17,6 +18,8 @@ const updateProfessionalController = new UpdateProfessionalController();
 const deleteProfessionalionalController = new DeleteProfessionalController();
 const professionalListController = new ProfessionalsListController();
 const professionalByIdController = new ProfessionalByIdController();
+const professionalBySpecialtyController =
+  new ProfessionalBySpecialtyController();
 
 const professionalsRouter = Router();
 
@@ -36,6 +39,11 @@ professionalsRouter.get(
   authenticated,
   verifyAccount,
   professionalByIdController.handle
+);
+professionalsRouter.get(
+  "/specialty/:specialty",
+  authenticated,
+  professionalBySpecialtyController.handle
 );
 professionalsRouter.patch(
   "/:id",
