@@ -1,8 +1,13 @@
 import PDFPrinter from "pdfmake";
 import { TDocumentDefinitions } from "pdfmake/interfaces";
 import fs from "fs";
+import { Patient, Professional } from "../entities";
 
-export const PDFGenerator = () => {
+export const PDFGenerator = (
+  patient: Patient,
+  prescription: string,
+  professional: Professional
+) => {
   const fonts = {
     Courier: {
       normal: "Courier",
@@ -17,31 +22,36 @@ export const PDFGenerator = () => {
     defaultStyle: { font: "Courier" },
     content: [
       {
-        text: "Nome do paciente)\n\n",
+        text: [` ${patient.name} \n\n`],
         style: "header",
+      },
+      {
+        text: [` ${patient.email} \n\n`, ` ${patient.phone} \n\n`],
+        style: "subheader",
       },
       {
         style: "bigger",
         italics: false,
+        text: ["Uso ", ` ${prescription} \n\n`, "\n\n"],
+      },
+      {
         text: [
-          "Prescrição do medico ",
-          "Prescrição do medico ",
-          "Prescrição do medico ",
-          "Prescrição do medico. \n\n",
-          "Prescrição do medico: ",
-          { text: "like here.\n", style: "header" },
-          "Prescrição do medico Prescrição do medico.\n\n",
-          "Prescrição do medico Prescrição do medico Prescrição do medico. ",
-          "Prescrição do medico Prescrição do medico Prescrição do medico ",
-          "Prescrição do medico Prescrição do medico Prescrição do medico: ",
-          { text: "wow! it works!", style: "header", bold: false },
-          "\n\nMake sure to take a look into the sources to understand what's going on here.",
+          `\n\n ${professional.name} `,
+          `\n\n ${professional.council_number} `,
+          `\n\n ${professional.specialty} `,
+          `\n\n ${professional.address} `,
         ],
+        style: "subheader",
+        bold: false,
       },
     ],
     styles: {
       header: {
         fontSize: 18,
+        bold: true,
+      },
+      subheader: {
+        fontSize: 14,
         bold: true,
       },
       bigger: {

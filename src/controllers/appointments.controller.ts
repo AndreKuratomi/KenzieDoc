@@ -16,6 +16,7 @@ export class CreateAppointmentController {
   async handle(req: Request, res: Response) {
     const createAppointmentService = new CreateAppointmentService();
     const data = req.body;
+    console.log(data.professional);
     const { date } = data;
 
     try {
@@ -28,6 +29,7 @@ export class CreateAppointmentController {
       );
       res.status(201).json(appointment);
     } catch (err: any) {
+      // console.log(err);
       return res.status(400).json({ message: err.message });
     }
   }
@@ -68,7 +70,6 @@ export class AppointmentByPatientController {
 
     try {
       const appointments = await appointmentByPatientService.execute(cpf);
-      console.log(appointments);
 
       return res.status(200).json(appointments);
     } catch (err: any) {
@@ -101,7 +102,6 @@ export class AppointmentsTomorrowController {
 
       return res.status(200).json(appointments);
     } catch (err: any) {
-      console.log(err);
       return res.status(400).json({ message: err.message });
     }
   }
@@ -126,7 +126,7 @@ export class WaitListController {
 export class Pdf {
   async handle(req: Request, res: Response) {
     try {
-      PDFGenerator();
+      // PDFGenerator();
 
       return res.status(200).json("gerou");
     } catch (err: any) {
