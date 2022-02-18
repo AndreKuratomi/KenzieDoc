@@ -2,7 +2,7 @@ import ProfessionalsRepository from "../repositories/professionals.repository";
 import { getCustomRepository } from "typeorm";
 import { Professional } from "../entities";
 import bcryptjs from "bcryptjs";
-import { title } from "../utils/functions";
+import { onlyNonSensitive, title } from "../utils/functions";
 import { IProfessionalByIdResult } from "../types";
 
 export class CreateProfessionalService {
@@ -46,7 +46,9 @@ export class ProfessionalsListService {
 
     const professionalsList = await professionalsRepository.find();
 
-    return professionalsList;
+    const nonSensitiveList = onlyNonSensitive(professionalsList);
+
+    return nonSensitiveList;
   }
 }
 
