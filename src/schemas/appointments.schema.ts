@@ -20,6 +20,7 @@ export const AppointmentSchema = yup.object().shape({
     )
     .required("'professionalId' is a required field!"),
   date: yup.date().required("'date' is a required field!"),
+  prescription: yup.string(),
   finished: yup
     .boolean()
     .typeError("The field 'finished' must be typeof boolean!")

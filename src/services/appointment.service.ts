@@ -1,5 +1,10 @@
 import { AppointmentsRepository } from "../repositories/appointments.repository";
-import { getCustomRepository, LessThan, MoreThan } from "typeorm";
+import {
+  getCustomRepository,
+  getRepository,
+  LessThan,
+  MoreThan,
+} from "typeorm";
 import { Appointment, Patient, Professional } from "../entities";
 import { Between } from "typeorm";
 import ErrorHandler from "../utils/errors";

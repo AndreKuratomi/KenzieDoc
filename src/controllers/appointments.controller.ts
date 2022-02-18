@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
-import { resolve } from "path/posix";
+
+import { PDFGenerator } from "../utils/pdfGeneretor";
 
 import {
   CreateAppointmentService,
@@ -38,7 +39,7 @@ export class UpdateAppointmentController {
     const data = req.body;
     const updateAppointmentService = new UpdateAppointmentService();
     try {
-      const toUpdate = updateAppointmentService.execute(id, data);
+      const toUpdate = await updateAppointmentService.execute(id, data);
       return res.status(200).json(toUpdate);
     } catch (err: any) {
       return res.status(err.statusCode).json({ message: err.message });
@@ -67,6 +68,7 @@ export class AppointmentByPatientController {
 
     try {
       const appointments = await appointmentByPatientService.execute(cpf);
+      console.log(appointments);
 
       return res.status(200).json(appointments);
     } catch (err: any) {
@@ -99,7 +101,7 @@ export class AppointmentsTomorrowController {
 
       return res.status(200).json(appointments);
     } catch (err: any) {
-      return res.status(400).json({ message: err.message });
+      return res.status(400).json({ message: err.message + "aquiiiiii" });
     }
   }
 }
@@ -114,6 +116,18 @@ export class WaitListController {
       return res
         .status(200)
         .json({ message: `wait list size is: ${waitListSize}` });
+    } catch (err: any) {
+      return res.status(400).json({ message: err.message });
+    }
+  }
+}
+
+export class Pdf {
+  async handle(req: Request, res: Response) {
+    try {
+      PDFGenerator();
+
+      return res.status(200).json("gerou");
     } catch (err: any) {
       return res.status(400).json({ message: err.message });
     }
