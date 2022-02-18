@@ -16,19 +16,19 @@ export class SendEmailController {
     }
 }
 
-export class SendPrescriptionEmailController {
-    async handle(req: any, res: Response) {
+// export class SendPrescriptionEmailController {
+//     async handle(req: any, res: Response) {
         
         
-        const data = req.body
-        const attachments = req.file
-        attachments.filename = req.file.originalname
+//         const data = req.body
+//         const attachments = req.file
+//         attachments.filename = req.file.originalname
         
-        try {
-            await sendPrescription(data.user, data.medic, data.email, data.specialty, attachments)
-            return res.json( {"Status":"Email successfully sent!"})
-        } catch (error) {
-            console.log(error)
-        }
-    }
-}
+//         try {
+//             await sendPrescription(data.user, data.medic, data.email, data.specialty, attachments)
+//             return res.json( {"Status":"Email successfully sent!"})
+//         } catch (error) {
+//             console.log(error)
+//         }
+//     }
+// }

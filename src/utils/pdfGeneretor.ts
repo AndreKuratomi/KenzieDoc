@@ -65,7 +65,7 @@ export const PDFGenerator = () => {
 
   const pdfDoc = printer.createPdfKitDocument(docDefinitions);
 
-  pdfDoc.pipe(fs.createWriteStream("src/utils/teste.pdf"));
+  pdfDoc.pipe(fs.createWriteStream("src/utils/temp/receita.pdf"));
 
   pdfDoc.end();
 };
