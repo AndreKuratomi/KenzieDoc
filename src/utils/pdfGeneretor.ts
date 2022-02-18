@@ -1,12 +1,16 @@
 import PDFPrinter from "pdfmake";
 import { TDocumentDefinitions } from "pdfmake/interfaces";
 import fs from "fs";
-import { Patient, Professional } from "../entities";
 
 export const PDFGenerator = (
-  patient: Patient,
-  prescription: string,
-  professional: Professional
+  user: string,
+  medic: string,
+  email: string,
+  crm: string,
+  specialty: string,
+  phone: string,
+  address: string,
+  prescription: string
 ) => {
   const fonts = {
     Courier: {
@@ -22,11 +26,11 @@ export const PDFGenerator = (
     defaultStyle: { font: "Courier" },
     content: [
       {
-        text: [` ${patient.name} \n\n`],
+        text: [` ${user} \n\n`],
         style: "header",
       },
       {
-        text: [` ${patient.email} \n\n`, ` ${patient.phone} \n\n`],
+        text: [` ${email} \n\n`, ` ${phone} \n\n`],
         style: "subheader",
       },
       {
@@ -36,10 +40,10 @@ export const PDFGenerator = (
       },
       {
         text: [
-          `\n\n ${professional.name} `,
-          `\n\n ${professional.council_number} `,
-          `\n\n ${professional.specialty} `,
-          `\n\n ${professional.address} `,
+          `\n\n ${medic} `,
+          `\n\n ${crm} `,
+          `\n\n ${specialty} `,
+          `\n\n ${address} `,
         ],
         style: "subheader",
         bold: false,

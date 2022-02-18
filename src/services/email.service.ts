@@ -47,8 +47,8 @@ export const attachmentEmailTemplateOptions = (
   to: string,
   subject: string,
   template: string,
-  context: any,
-  attachments: any
+  context: any
+  // attachments: any
 ) => {
   return {
     from: "no-reply@kenziedoc.com",
@@ -56,7 +56,7 @@ export const attachmentEmailTemplateOptions = (
     subject,
     template,
     context,
-    attachments,
+    // attachments,
   };
 };
 
@@ -183,8 +183,7 @@ export const sendPrescription = async (
       user,
       medic,
       specialty,
-    },
-    attachments
+    }
   );
 
   transport.sendMail(message, function (err, info) {

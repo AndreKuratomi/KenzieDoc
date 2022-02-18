@@ -12,7 +12,11 @@ import {
 import { getCustomRepository } from "typeorm";
 import PatientRepository from "../repositories/patients.repository";
 import ProfessionalRepository from "../repositories/professionals.repository";
-import { sendAppointmentEmail } from "../services/email.service";
+import {
+  sendAppointmentEmail,
+  sendPrescription,
+} from "../services/email.service";
+import { Appointment } from "../entities";
 
 export class CreateAppointmentController {
   async handle(req: Request, res: Response) {
@@ -55,6 +59,7 @@ export class UpdateAppointmentController {
     const { id } = req.params;
     const data = req.body;
     const updateAppointmentService = new UpdateAppointmentService();
+
     try {
       const toUpdate = await updateAppointmentService.execute(id, data);
       return res.status(200).json(toUpdate);
