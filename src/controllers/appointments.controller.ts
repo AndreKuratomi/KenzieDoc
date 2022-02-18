@@ -8,6 +8,7 @@ import {
   AppointmentByProfessionalService,
   AppointmentsTomorrowService,
   WaitListService,
+  prescriptionPdf,
 } from "../services/appointment.service";
 import { getCustomRepository } from "typeorm";
 import PatientRepository from "../repositories/patients.repository";

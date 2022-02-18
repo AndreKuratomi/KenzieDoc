@@ -9,7 +9,7 @@ import {
   AppointmentByProfessionalController,
   AppointmentsTomorrowController,
   WaitListController,
-  Pdf,
+  // Pdf,
 } from "../controllers/appointments.controller";
 import isValidUUID from "../middlewares/uuid.middleware";
 import { validateSchema } from "../middlewares/validate.schema.middleware";
@@ -25,7 +25,7 @@ const appointmentByProfessionalController =
 const appointmentsTomorrowController = new AppointmentsTomorrowController();
 const waitListController = new WaitListController();
 
-const pdf = new Pdf();
+// const pdf = new Pdf();
 
 const appointmentsRouter = Router();
 
@@ -53,6 +53,6 @@ appointmentsRouter.delete(
   deleteAppointmentController.handle
 );
 
-appointmentsRouter.get("/pdf", pdf.handle);
+// appointmentsRouter.get("/pdf", pdf.handle);
 
 export default appointmentsRouter;
