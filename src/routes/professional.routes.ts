@@ -7,8 +7,10 @@ import {
   UpdateProfessionalController,
 } from "../controllers/professional.controller";
 import authenticated from "../middlewares/authenticate.user.middletare";
+import { validateSchema } from "../middlewares/validate.schema.middleware";
 import verifyAccount from "../middlewares/verify.account.middleware";
 import verifyAdmin from "../middlewares/verify.admin.middleware";
+import { ProfessionalSchema } from "../schemas/professionals.schema";
 
 const createProfessionalController = new CreateProfessionalController();
 const updateProfessionalController = new UpdateProfessionalController();
@@ -18,7 +20,11 @@ const professionalByIdController = new ProfessionalByIdController();
 
 const professionalsRouter = Router();
 
-professionalsRouter.post("", createProfessionalController.handle);
+professionalsRouter.post(
+  "",
+  validateSchema(ProfessionalSchema),
+  createProfessionalController.handle
+);
 professionalsRouter.get(
   "",
   authenticated,
