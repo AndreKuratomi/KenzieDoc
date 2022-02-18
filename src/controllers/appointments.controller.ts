@@ -1,7 +1,5 @@
 import { Request, Response } from "express";
-
 import { PDFGenerator } from "../utils/pdfGeneretor";
-
 import {
   CreateAppointmentService,
   UpdateAppointmentService,
@@ -11,6 +9,10 @@ import {
   AppointmentsTomorrowService,
   WaitListService,
 } from "../services/appointment.service";
+import { getCustomRepository } from "typeorm";
+import PatientRepository from "../repositories/patients.repository";
+import ProfessionalRepository from "../repositories/professionals.repository";
+import { sendAppointmentEmail } from "../services/email.service";
 
 export class CreateAppointmentController {
   async handle(req: Request, res: Response) {
@@ -18,6 +20,16 @@ export class CreateAppointmentController {
     const data = req.body;
     console.log(data.professional);
     const { date } = data;
+    const patientRepo = getCustomRepository(PatientRepository);
+    const proRepo = getCustomRepository(ProfessionalRepository);
+    const user = await patientRepo.findOne({ where: { cpf: data.patient } });
+    const medic = await proRepo.findOne({
+      where: { council_number: data.professional },
+    });
+    const name: any = user?.name;
+    const mail: any = user?.email;
+    const medicName: any = medic?.name;
+    const specialty: any = medic?.specialty;
 
     try {
       const day = date.split(" ")[0];
@@ -27,6 +39,9 @@ export class CreateAppointmentController {
         day,
         hour
       );
+
+      await sendAppointmentEmail(name, medicName, mail, specialty, date, hour);
+
       res.status(201).json(appointment);
     } catch (err: any) {
       // console.log(err);
@@ -81,7 +96,8 @@ export class AppointmentByProfessionalController {
   async handle(req: Request, res: Response) {
     const appointmentByProfessionalService =
       new AppointmentByProfessionalService();
-    const { crm } = req.params;
+    let { crm } = req.params;
+    crm = crm.toUpperCase();
 
     try {
       const appointments = await appointmentByProfessionalService.execute(crm);
@@ -109,7 +125,8 @@ export class AppointmentsTomorrowController {
 export class WaitListController {
   async handle(req: Request, res: Response) {
     const waitListService = new WaitListService();
-    const { crm } = req.params;
+    let { crm } = req.params;
+    crm = crm.toUpperCase();
 
     try {
       const waitListSize = await waitListService.execute(crm);
