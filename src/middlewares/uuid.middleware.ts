@@ -14,10 +14,11 @@ const isValidUUID = async (req: Request, res: Response, next: NextFunction) => {
     const isValidUUID = await appointmentsRepository.findOne({
       where: { id: id },
     });
-    console.log(isValidUUID);
-    if (isValidUUID === undefined) {
+
+    if (!isValidUUID) {
       throw new ErrorHandler("No uuid found!", 404);
     }
+
     next();
   } catch (error: any) {
     return res.status(error.statusCode).json({ Error: error.message });
