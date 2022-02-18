@@ -5,6 +5,7 @@ import bcryptjs from "bcryptjs";
 import {
   checkUpdateProfessional,
   formatProfessionalSpecialty,
+  onlyNonSensitive,
   title,
 } from "../utils/functions";
 import { IProfessionalByIdResult } from "../types";
@@ -50,7 +51,9 @@ export class ProfessionalsListService {
 
     const professionalsList = await professionalsRepository.find();
 
-    return professionalsList;
+    const nonSensitiveList = onlyNonSensitive(professionalsList);
+
+    return nonSensitiveList;
   }
 }
 
