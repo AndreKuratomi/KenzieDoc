@@ -17,23 +17,11 @@ import {
 } from "../utils/functions";
 
 export class CreateAppointmentService {
-  async execute(data: Appointment, date: string, hour: string) {
-    const patientRepo = getRepository(Patient);
-    const proRepo = getRepository(Professional);
-    const user = await patientRepo.findOne({ where: { cpf: data.patient } });
-    const medic = await proRepo.findOne({
-      where: { council_number: data.professional },
-    });
-    const name: any = user?.name;
-    const mail: any = user?.email;
-    const medicName: any = medic?.name;
-    const specialty: any = medic?.specialty;
+  async execute(data: Appointment, day: string, hour: string) {
     const appointmentsRepository = getCustomRepository(AppointmentsRepository);
-    
+
     const newAppointment = appointmentsRepository.create(data);
     await appointmentsRepository.save(newAppointment);
-
-    await sendAppointmentEmail(name, medicName, mail, specialty, date, hour);
 
     return newAppointment;
   }
@@ -163,8 +151,8 @@ export class DeleteAppointmentService {
     const mail: any = user?.email;
     const medicName: any = medic?.name;
     const specialty: any = medic?.specialty;
-    const date:any = appointmentToDelete?.date.toLocaleDateString()
-    const hour:any = appointmentToDelete?.date.toLocaleTimeString()
+    const date: any = appointmentToDelete?.date.toLocaleDateString();
+    const hour: any = appointmentToDelete?.date.toLocaleTimeString();
 
     if (!appointmentToDelete) {
       throw new Error("This appointment does not exist");

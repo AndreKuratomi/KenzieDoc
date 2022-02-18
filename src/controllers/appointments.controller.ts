@@ -1,8 +1,7 @@
 import { Request, Response } from "express";
-
+import { PDFGenerator } from "../utils/pdfGeneretor";
 import {
   CreateAppointmentService,
-  // AppointmentsListService,
   UpdateAppointmentService,
   DeleteAppointmentService,
   AppointmentByPatientService,
@@ -10,12 +9,26 @@ import {
   AppointmentsTomorrowService,
   WaitListService,
 } from "../services/appointment.service";
+import { getCustomRepository } from "typeorm";
+import PatientRepository from "../repositories/patients.repository";
+import ProfessionalRepository from "../repositories/professionals.repository";
+import { sendAppointmentEmail } from "../services/email.service";
 
 export class CreateAppointmentController {
   async handle(req: Request, res: Response) {
     const createAppointmentService = new CreateAppointmentService();
     const data = req.body;
     const { date } = data;
+    const patientRepo = getCustomRepository(PatientRepository);
+    const proRepo = getCustomRepository(ProfessionalRepository);
+    const user = await patientRepo.findOne({ where: { cpf: data.patient } });
+    const medic = await proRepo.findOne({
+      where: { council_number: data.professional },
+    });
+    const name: any = user?.name;
+    const mail: any = user?.email;
+    const medicName: any = medic?.name;
+    const specialty: any = medic?.specialty;
 
     try {
       const day = date.split(" ")[0];
@@ -27,9 +40,39 @@ export class CreateAppointmentController {
         hour
       );
 
+      await sendAppointmentEmail(name, medicName, mail, specialty, date, hour);
+
       res.status(201).json(appointment);
     } catch (err: any) {
       return res.status(400).json({ message: err.message });
+    }
+  }
+}
+
+export class UpdateAppointmentController {
+  async handle(req: Request, res: Response) {
+    const { id } = req.params;
+    const data = req.body;
+    const updateAppointmentService = new UpdateAppointmentService();
+    try {
+      const toUpdate = await updateAppointmentService.execute(id, data);
+      return res.status(200).json(toUpdate);
+    } catch (err: any) {
+      return res.status(err.statusCode).json({ message: err.message });
+    }
+  }
+}
+
+export class DeleteAppointmentController {
+  async handle(req: Request, res: Response) {
+    const { id } = req.params;
+    try {
+      const deleteAppointmentService = new DeleteAppointmentService();
+
+      const toDelete = deleteAppointmentService.execute(id);
+      return res.status(204).json(toDelete);
+    } catch (err: any) {
+      return res.status(err.statusCode).json({ message: err.message });
     }
   }
 }
@@ -42,19 +85,12 @@ export class AppointmentByPatientController {
     try {
       const appointments = await appointmentByPatientService.execute(cpf);
 
-      if (appointments.length === 0) {
-        return res
-          .status(200)
-          .json({ message: "There are no appointments for this patient!" });
-      }
-
       return res.status(200).json(appointments);
     } catch (err: any) {
       return res.status(400).json({ message: err.message });
     }
   }
 }
-
 export class AppointmentByProfessionalController {
   async handle(req: Request, res: Response) {
     const appointmentByProfessionalService =
@@ -65,11 +101,6 @@ export class AppointmentByProfessionalController {
     try {
       const appointments = await appointmentByProfessionalService.execute(crm);
 
-      if (appointments.length === 0) {
-        return res
-          .status(200)
-          .json({ message: "There are no appointments for this professional" });
-      }
       return res.status(200).json(appointments);
     } catch (err: any) {
       return res.status(400).json({ message: err.message });
@@ -86,11 +117,11 @@ export class AppointmentsTomorrowController {
 
       return res.status(200).json(appointments);
     } catch (err: any) {
+      console.log(err);
       return res.status(400).json({ message: err.message });
     }
   }
 }
-
 export class WaitListController {
   async handle(req: Request, res: Response) {
     const waitListService = new WaitListService();
@@ -107,32 +138,14 @@ export class WaitListController {
   }
 }
 
-export class UpdateAppointmentController {
+export class Pdf {
   async handle(req: Request, res: Response) {
-    const { id } = req.params;
-    const data = req.body;
-    const updateAppointmentService = new UpdateAppointmentService();
-
     try {
-      const toUpdate = await updateAppointmentService.execute(id, data);
+      PDFGenerator();
 
-      return res.status(200).json(toUpdate);
+      return res.status(200).json("gerou");
     } catch (err: any) {
       return res.status(400).json({ message: err.message });
-    }
-  }
-}
-
-export class DeleteAppointmentController {
-  async handle(req: Request, res: Response) {
-    const { id } = req.params;
-    try {
-      const deleteAppointmentService = new DeleteAppointmentService();
-
-      const toDelete = deleteAppointmentService.execute(id);
-      return res.status(204).json(toDelete);
-    } catch (err: any) {
-      return res.status(err.statusCode).json({ message: err.message });
     }
   }
 }

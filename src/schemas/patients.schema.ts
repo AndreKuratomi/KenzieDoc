@@ -5,11 +5,8 @@ export const PatientSchema = yup.object().shape({
     .string()
     .typeError("The field 'cpf' must be typeof string!")
     .strict(true)
-    .matches(
-      /^([0-9]){3}\.([0-9]){3}\.([0-9]){3}-([0-9]){2}$/,
-      "Invalid field 'cpf'. Correct example: 'xxx.xxx.xxx-xx'"
-    )
-    .required("'CPF' is a required field!"),
+    .required("'CPF' is a required field!")
+    .length(11, "CPF must have 11 digits!"),
   name: yup
     .string()
     .typeError("The field 'name' must be typeof string!")
@@ -36,16 +33,13 @@ export const PatientSchema = yup.object().shape({
     .typeError("The field 'password' must be typeof string!")
     .strict(true)
     .required("'password' is a required field!")
-    .min(4, "Minimun 4 digits!"),
+    .min(4, "Minimun 4 digits for password!"),
   phone: yup
     .string()
     .typeError("The field 'phone' must be typeof string!")
     .strict(true)
-    .matches(
-      /^(\([0-9]{2}\)[0-9]{4,5}-)[0-9]{4}$/,
-      "Invalid phone number format. Correct example '(xx)xxxx-xxxx' or '(xx)yxxxx-xxxx'"
-    )
-    .required("'phone' is a required field!"),
+    .required("'phone' is a required field!")
+    .length(11, "Phone field must have 11 digits!"),
   health_plan: yup
     .string()
     .typeError("The field 'health_plan' must be typeof string!")
