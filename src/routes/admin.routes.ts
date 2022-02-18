@@ -4,6 +4,7 @@ import {
   UpdateAdminController,
 } from "../controllers/admin.constroller";
 import authenticated from "../middlewares/authenticate.user.middletare";
+import isValidUUID from "../middlewares/uuid.middleware";
 import { validateSchema } from "../middlewares/validate.schema.middleware";
 import verifyAdmin from "../middlewares/verify.admin.middleware";
 import { AdminSchema } from "../schemas/admin.schema";
@@ -18,6 +19,7 @@ adminRouter.patch(
   "/:id",
   authenticated,
   verifyAdmin,
+  // isValidUUID,
   updateAdminController.handle
 );
 
