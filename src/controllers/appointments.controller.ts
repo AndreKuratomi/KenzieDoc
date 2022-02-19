@@ -29,7 +29,6 @@ export class CreateAppointmentController {
     });
     const name: any = user?.name;
     const mail: any = user?.email;
-    // phone is for whatsapp
     const phone: any = user?.phone;
 
     const medicName: any = medic?.name;
@@ -47,10 +46,9 @@ export class CreateAppointmentController {
 
       await sendAppointmentEmail(name, medicName, mail, specialty, date, hour);
 
-      // Whatsapp
-      await sendAppointmentWhatsapp(name, medicName, phone, specialty, date, hour);
+      await sendAppointmentWhatsapp(name, medicName, phone, specialty, date);
 
-      res.status(201).json(appointment);
+      return res.status(201).json(appointment);
     } catch (err: any) {
       return res.status(400).json({ message: err.message });
     }

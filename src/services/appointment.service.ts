@@ -16,6 +16,7 @@ import {
   formatWaitList,
 } from "../utils/functions";
 import { PDFGenerator } from "../utils/pdfGeneretor";
+import { sendCancelationWhatsapp } from "./whatsapp.service";
 
 export class CreateAppointmentService {
   async execute(data: Appointment, date: string, hour: string) {
@@ -162,6 +163,7 @@ export class DeleteAppointmentService {
     });
     const name: any = user?.name;
     const mail: any = user?.email;
+    const phone: any = user?.phone;
     const medicName: any = medic?.name;
     const specialty: any = medic?.specialty;
     const date:any = appointmentToDelete?.date.toLocaleDateString()
@@ -172,6 +174,8 @@ export class DeleteAppointmentService {
     }
 
     await sendCancelationEmail(name, medicName, mail, specialty, date, hour);
+
+    await sendCancelationWhatsapp(name, medicName, phone, specialty);
 
     const deletedAppointment = await appointmentsRepository.remove(
       appointmentToDelete
