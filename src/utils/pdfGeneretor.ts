@@ -2,15 +2,15 @@ import PDFPrinter from "pdfmake";
 import { TDocumentDefinitions } from "pdfmake/interfaces";
 import fs from "fs";
 
-export const PDFGenerator = (
-  user: string,
-  medic: string,
-  email: string,
-  crm: string,
-  specialty: string,
-  phone: string,
-  address: string,
-  prescription: string
+export const PDFGenerator = async (
+  name: any,
+  email: any,
+  phone: any,
+  prescription: any,
+  medicName: any,
+  crm: any,
+  specialty: any,
+  address: any
 ) => {
   const fonts = {
     Courier: {
@@ -22,28 +22,44 @@ export const PDFGenerator = (
   };
   const printer = new PDFPrinter(fonts);
 
-  const docDefinitions: TDocumentDefinitions = {
+  const docDefinitions: TDocumentDefinitions = await {
     defaultStyle: { font: "Courier" },
     content: [
       {
-        text: [` ${user} \n\n`],
+        text: [
+          `\n\n \n\n`,
+          "Clinica ",
+          { text: "KenzieDoc", color: "blue" },
+          `\n\n`,
+        ],
         style: "header",
       },
+      // {
+      //   image: "../../assets/logo.svg",
+      //   width: 50,
+      //   height: 50,
+      // },
       {
-        text: [` ${email} \n\n`, ` ${phone} \n\n`],
+        text: [`\n\n \n\n Nome: ${email} \n\n`],
         style: "subheader",
       },
       {
+        text: [`Email: ${name} \n\n`, `Telefone: ${medicName}`],
+        style: "subheader",
+      },
+      { text: [`\n\n \n\n \n\n`] },
+      {
         style: "bigger",
         italics: false,
-        text: ["Uso ", ` ${prescription} \n\n`, "\n\n"],
+        text: ["Prescrição: ", { text: ` ${specialty}`, italics: true }],
       },
+      { text: [`\n\n \n\n \n\n`] },
       {
         text: [
-          `\n\n ${medic} `,
-          `\n\n ${crm} `,
-          `\n\n ${specialty} `,
-          `\n\n ${address} `,
+          `\n\n Doutor: ${crm} `,
+          `\n\n CRM: ${address} `,
+          `\n\n Especialidade: ${prescription}`,
+          `\n\n Endereço: ${phone}`,
         ],
         style: "subheader",
         bold: false,
@@ -57,10 +73,12 @@ export const PDFGenerator = (
       subheader: {
         fontSize: 14,
         bold: true,
+        margin: [20, 0, 40, 0],
       },
       bigger: {
         fontSize: 15,
-        italics: true,
+        background: "#ccc",
+        margin: [20, 0, 40, 0],
       },
     },
   };

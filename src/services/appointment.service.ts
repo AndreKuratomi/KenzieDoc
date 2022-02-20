@@ -8,18 +8,29 @@ import {
 import { Appointment, Patient, Professional } from "../entities";
 import { Between } from "typeorm";
 import ErrorHandler from "../utils/errors";
-import { sendAppointmentEmail, sendCancelationEmail } from "./email.service";
+import {
+  sendAppointmentEmail,
+  sendCancelationEmail,
+  sendPrescription,
+} from "./email.service";
 import {
   formatAppointmentsTomorrow,
   formatPatientAppointment,
   formatProfessionalAppointment,
   formatWaitList,
 } from "../utils/functions";
+import { PDFGenerator } from "../utils/pdfGeneretor";
 import PatientRepository from "../repositories/patients.repository";
 import ProfessionalRepository from "../repositories/professionals.repository";
 
 export class CreateAppointmentService {
-  async execute(data: Appointment, day: string, hour: string) {
+  async execute(data: Appointment, date: string, hour: string) {
+    const patientRepo = getRepository(Patient);
+    const proRepo = getRepository(Professional);
+    const user = await patientRepo.findOne({ where: { cpf: data.patient } });
+    const medic = await proRepo.findOne({
+      where: { council_number: data.professional },
+    });
     const appointmentsRepository = getCustomRepository(AppointmentsRepository);
 
     const newAppointment = appointmentsRepository.create(data);
@@ -115,6 +126,21 @@ export class UpdateAppointmentService {
       relations: ["professional", "patient"],
     });
 
+    console.log(updatedAppointment?.patient);
+
+    if (updatedAppointment?.finished === true) {
+      prescriptionPdf(
+        updatedAppointment?.patient.name,
+        updatedAppointment?.patient.email,
+        updatedAppointment?.patient.phone,
+        updatedAppointment?.prescription,
+        updatedAppointment?.professional.name,
+        updatedAppointment?.professional.council_number,
+        updatedAppointment?.professional.specialty,
+        updatedAppointment?.professional.address
+      );
+    }
+
     if (!updatedAppointment) {
       throw new ErrorHandler("This appointment does not exist", 404);
     }
@@ -126,7 +152,6 @@ export class UpdateAppointmentService {
       patient: updatedAppointment.patient.cpf,
       finished: updatedAppointment.finished,
     };
-
     return result;
   }
 }
@@ -169,3 +194,33 @@ export class DeleteAppointmentService {
     return deletedAppointment;
   }
 }
+
+export const prescriptionPdf = async (
+  email: any,
+  name: any,
+  medicName: any,
+  specialty: any,
+  crm: any,
+  address: any,
+  prescription: any,
+  phone: any
+) => {
+  const appointmentsRepository = getCustomRepository(AppointmentsRepository);
+  console.log(appointmentsRepository);
+  try {
+    PDFGenerator(
+      name,
+      email,
+      phone,
+      prescription,
+      medicName,
+      crm,
+      specialty,
+      address
+    );
+
+    await sendPrescription(email, name, medicName, specialty);
+  } catch (err: any) {
+    console.log(err);
+  }
+};

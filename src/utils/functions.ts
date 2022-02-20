@@ -4,6 +4,7 @@ import {
   IAppointmentsProfessionalResult,
   IAppointmentsTomorrowResult,
   IAppointmentWaitListResult,
+  IProfessionalSpecialty,
 } from "../types";
 import bcryptjs from "bcryptjs";
 
@@ -108,6 +109,24 @@ export const formatWaitList = (appointments: Appointment[]) => {
   return result;
 };
 
+export const onlyNonSensitive = (repo: Professional[]) => {
+  let nonSensitiveDataList: object[] = [];
+
+  for (let count = 0; count < repo.length; count++) {
+    const {
+      email: email_data,
+      password: password_data,
+      phone: phone_data,
+      address: address_data,
+      ...nonSensitiveData
+    } = repo[count];
+
+    nonSensitiveDataList.push(nonSensitiveData);
+  }
+
+  return nonSensitiveDataList;
+};
+
 export const checkUpdateProfessional = async (data: Professional) => {
   if (data.council_number) {
     throw new Error("You can not change your council number");
@@ -137,4 +156,16 @@ export const checkUpdateProfessional = async (data: Professional) => {
       throw new Error("Invalid phone number. Correct format: (xx)xxxxx-xxxx");
     }
   }
+};
+
+export const formatProfessionalSpecialty = (professionals: Professional[]) => {
+  let specialtyList: IProfessionalSpecialty[] = [];
+  professionals.forEach((prof) => {
+    specialtyList.push({
+      council_number: prof.council_number,
+      name: prof.name,
+    });
+  });
+
+  return specialtyList;
 };

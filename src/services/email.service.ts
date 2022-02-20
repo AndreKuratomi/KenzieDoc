@@ -2,7 +2,7 @@ import nodemailer from "nodemailer";
 import hbs, {
   NodemailerExpressHandlebarsOptions,
 } from "nodemailer-express-handlebars";
-import path from "path";
+import * as tpath from "path";
 
 interface EmailBody {
   to: string;
@@ -47,8 +47,8 @@ export const attachmentEmailTemplateOptions = (
   to: string,
   subject: string,
   template: string,
-  context: any
-  // attachments: any
+  context: any,
+  attachments: any
 ) => {
   return {
     from: "no-reply@kenziedoc.com",
@@ -56,7 +56,27 @@ export const attachmentEmailTemplateOptions = (
     subject,
     template,
     context,
-    // attachments,
+    attachments,
+  };
+};
+
+export const attachmentTemplateOptions = (
+  to: string,
+  subject: string,
+  template: string,
+  context: any
+) => {
+  return {
+    from: "no-reply@kenziedoc.com",
+    to,
+    subject,
+    template,
+    context,
+    attachments: [
+      {
+        path: tpath.resolve(__dirname, "..", "utils", "temp", "receita.pdf"),
+      },
+    ],
   };
 };
 
@@ -89,10 +109,10 @@ export const sendAppointmentEmail = async (
 
   const handlebarOption: NodemailerExpressHandlebarsOptions = {
     viewEngine: {
-      partialsDir: path.resolve(__dirname, "..", "templates"),
+      partialsDir: tpath.resolve(__dirname, "..", "templates"),
       defaultLayout: undefined,
     },
-    viewPath: path.resolve(__dirname, "..", "templates"),
+    viewPath: tpath.resolve(__dirname, "..", "templates"),
   };
 
   transport.use("compile", hbs(handlebarOption));
@@ -127,10 +147,10 @@ export const sendCancelationEmail = async (
 
   const handlebarOption: NodemailerExpressHandlebarsOptions = {
     viewEngine: {
-      partialsDir: path.resolve(__dirname, "..", "templates"),
+      partialsDir: tpath.resolve(__dirname, "..", "templates"),
       defaultLayout: undefined,
     },
-    viewPath: path.resolve(__dirname, "..", "templates"),
+    viewPath: tpath.resolve(__dirname, "..", "templates"),
   };
 
   transport.use("compile", hbs(handlebarOption));
@@ -144,47 +164,33 @@ export const sendCancelationEmail = async (
     date,
     hour,
   });
-
-  transport.sendMail(message, function (err, info) {
-    if (err) {
-      return console.log(err);
-    } else {
-      console.log(info);
-    }
-  });
 };
 
 export const sendPrescription = async (
+  email: string,
   user: string,
   medic: string,
-  email: string,
-  specialty: string,
-  attachments: any
+  specialty: string
 ) => {
   const subject = "Prescrição Médica";
 
   const handlebarOption: NodemailerExpressHandlebarsOptions = {
     viewEngine: {
-      partialsDir: path.resolve(__dirname, "..", "templates"),
+      partialsDir: tpath.resolve(__dirname, "..", "templates"),
       defaultLayout: undefined,
     },
-    viewPath: path.resolve(__dirname, "..", "templates"),
+    viewPath: tpath.resolve(__dirname, "..", "templates"),
   };
 
   transport.use("compile", hbs(handlebarOption));
 
   specialty = specialty.toLocaleLowerCase();
 
-  const message = attachmentEmailTemplateOptions(
-    email,
-    subject,
-    "prescription",
-    {
-      user,
-      medic,
-      specialty,
-    }
-  );
+  const message = attachmentTemplateOptions(email, subject, "prescription", {
+    user,
+    medic,
+    specialty,
+  });
 
   transport.sendMail(message, function (err, info) {
     if (err) {

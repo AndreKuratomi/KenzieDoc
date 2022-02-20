@@ -3,9 +3,11 @@ import {
   CreateProfessionalService,
   DeleteProfessionalService,
   ProfessionalByIdService,
+  ProfessionalBySpecialtyService,
   ProfessionalsListService,
   UpdateProfessionalService,
 } from "../services/professional.service";
+import { title } from "../utils/functions";
 
 export class CreateProfessionalController {
   async handle(req: Request, res: Response) {
@@ -79,6 +81,23 @@ export class ProfessionalByIdController {
       const professional = await professionalByIdService.execute(id);
 
       return res.status(200).json(professional);
+    } catch (err: any) {
+      return res.status(400).json({ message: err.message });
+    }
+  }
+}
+
+export class ProfessionalBySpecialtyController {
+  async handle(req: Request, res: Response) {
+    const professionalBySpecialtyService = new ProfessionalBySpecialtyService();
+    const { specialty } = req.params;
+
+    try {
+      const specialtyList = await professionalBySpecialtyService.execute(
+        title(specialty)
+      );
+
+      return res.status(200).json(specialtyList);
     } catch (err: any) {
       return res.status(400).json({ message: err.message });
     }
