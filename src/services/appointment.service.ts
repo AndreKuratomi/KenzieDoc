@@ -19,7 +19,7 @@ import {
   formatProfessionalAppointment,
   formatWaitList,
 } from "../utils/functions";
-// import { PDFGenerator } from "../utils/pdfGeneretor";
+import { PDFGenerator } from "../utils/pdfGeneretor";
 import { sendCancelationWhatsapp } from "./whatsapp.service";
 
 export class CreateAppointmentService {
@@ -196,7 +196,7 @@ export const prescriptionPdf = async (
   specialty: string
 ) => {
   try {
-    // PDFGenerator();
+    PDFGenerator();
 
     await sendPrescription(email, name, medicName, specialty);
   } catch (err: any) {
