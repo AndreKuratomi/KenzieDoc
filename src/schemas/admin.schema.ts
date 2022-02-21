@@ -16,12 +16,4 @@ export const AdminSchema = yup.object().shape({
     .strict(true)
     .required("'password' is a required field!")
     .min(4, "Minimun 4 digits for password!"),
-  isAdm: yup
-    .boolean()
-    .default(() => {
-      return false;
-    })
-    .transform(() => {
-      return false;
-    }),
 });
