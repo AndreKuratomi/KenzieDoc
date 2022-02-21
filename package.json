@@ -20,6 +20,7 @@
     "nodemailer-express-handlebars": "^4.0.0",
     "pdfmake": "^0.2.4",
     "pg": "^8.7.1",
+    "puppeteer": "^13.3.2",
     "reflect-metadata": "^0.1.13",
     "string": "^3.3.3",
     "sucrase": "^3.20.3",

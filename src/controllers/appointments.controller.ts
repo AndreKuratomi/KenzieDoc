@@ -14,6 +14,7 @@ import { getCustomRepository } from "typeorm";
 import PatientRepository from "../repositories/patients.repository";
 import ProfessionalRepository from "../repositories/professionals.repository";
 import { sendAppointmentEmail } from "../services/email.service";
+import { sendAppointmentWhatsapp } from "../services/whatsapp.service";
 
 export class CreateAppointmentController {
   async handle(req: Request, res: Response) {
@@ -28,6 +29,8 @@ export class CreateAppointmentController {
     });
     const name: any = user?.name;
     const mail: any = user?.email;
+    const phone: any = user?.phone;
+
     const medicName: any = medic?.name;
     const specialty: any = medic?.specialty;
 
@@ -43,7 +46,9 @@ export class CreateAppointmentController {
 
       await sendAppointmentEmail(name, medicName, mail, specialty, date, hour);
 
-      res.status(201).json(appointment);
+      await sendAppointmentWhatsapp(name, medicName, phone, specialty, date);
+
+      return res.status(201).json(appointment);
     } catch (err: any) {
       return res.status(400).json({ message: err.message });
     }
