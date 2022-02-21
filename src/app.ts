@@ -3,13 +3,13 @@ import router from "./routes";
 import { handleError } from "./middlewares/errors.middlewares";
 import swaggerUiExpress from "swagger-ui-express";
 import swaggerDocument from "./swagger.js";
-// import cors from "cors";
+import cors from "cors";
 
 const app = express();
 
 app.use(express.json());
 
-// app.use(cors());
+app.use(cors({ origin: "https://kenzie-doc.herokuapp.com/" }));
 
 app.use(
   "/docs",
