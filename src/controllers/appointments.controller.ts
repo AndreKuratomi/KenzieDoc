@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { PDFGenerator } from "../utils/pdfGeneretor";
+// import { PDFGenerator } from "../utils/pdfGeneretor";
 import {
   CreateAppointmentService,
   UpdateAppointmentService,
@@ -147,7 +147,7 @@ export class WaitListController {
 export class Pdf {
   async handle(req: Request, res: Response) {
     try {
-      PDFGenerator();
+      // PDFGenerator();
 
       return res.status(200).json("gerou");
     } catch (err: any) {

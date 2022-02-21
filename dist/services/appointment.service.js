@@ -47,7 +47,7 @@ var typeorm_2 = require("typeorm");
 var errors_1 = __importDefault(require("../utils/errors"));
 var email_service_1 = require("./email.service");
 var functions_1 = require("../utils/functions");
-var pdfGeneretor_1 = require("../utils/pdfGeneretor");
+// import { PDFGenerator } from "../utils/pdfGeneretor";
 var whatsapp_service_1 = require("./whatsapp.service");
 var CreateAppointmentService = /** @class */ (function () {
     function CreateAppointmentService() {
@@ -296,9 +296,10 @@ var prescriptionPdf = function (email, name, medicName, specialty) { return __aw
         switch (_a.label) {
             case 0:
                 _a.trys.push([0, 2, , 3]);
-                (0, pdfGeneretor_1.PDFGenerator)();
+                // PDFGenerator();
                 return [4 /*yield*/, (0, email_service_1.sendPrescription)(email, name, medicName, specialty)];
             case 1:
+                // PDFGenerator();
                 _a.sent();
                 return [3 /*break*/, 3];
             case 2:

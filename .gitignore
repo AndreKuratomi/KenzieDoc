@@ -1,4 +1,5 @@
 .env
 node_modules
 /dist
-
+pdfGeneretor.js
+pdfGeneretor.js.map

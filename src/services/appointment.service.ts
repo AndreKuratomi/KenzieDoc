@@ -8,14 +8,18 @@ import {
 import { Appointment, Patient, Professional } from "../entities";
 import { Between } from "typeorm";
 import ErrorHandler from "../utils/errors";
-import { sendAppointmentEmail, sendCancelationEmail, sendPrescription } from "./email.service";
+import {
+  sendAppointmentEmail,
+  sendCancelationEmail,
+  sendPrescription,
+} from "./email.service";
 import {
   formatAppointmentsTomorrow,
   formatPatientAppointment,
   formatProfessionalAppointment,
   formatWaitList,
 } from "../utils/functions";
-import { PDFGenerator } from "../utils/pdfGeneretor";
+// import { PDFGenerator } from "../utils/pdfGeneretor";
 import { sendCancelationWhatsapp } from "./whatsapp.service";
 
 export class CreateAppointmentService {
@@ -27,7 +31,7 @@ export class CreateAppointmentService {
       where: { council_number: data.professional },
     });
     const appointmentsRepository = getCustomRepository(AppointmentsRepository);
-    
+
     const newAppointment = appointmentsRepository.create(data);
     await appointmentsRepository.save(newAppointment);
 
@@ -166,8 +170,8 @@ export class DeleteAppointmentService {
     const phone: any = user?.phone;
     const medicName: any = medic?.name;
     const specialty: any = medic?.specialty;
-    const date:any = appointmentToDelete?.date.toLocaleDateString()
-    const hour:any = appointmentToDelete?.date.toLocaleTimeString()
+    const date: any = appointmentToDelete?.date.toLocaleDateString();
+    const hour: any = appointmentToDelete?.date.toLocaleTimeString();
 
     if (!appointmentToDelete) {
       throw new Error("This appointment does not exist");
@@ -185,13 +189,17 @@ export class DeleteAppointmentService {
   }
 }
 
-export const prescriptionPdf = async (email: string, name: string, medicName: string, specialty:string) => {
-      try {
-        PDFGenerator();
-  
-        await sendPrescription(email, name, medicName,specialty)
-  
-      } catch (err: any) {
-        console.log(err)
-      }
-    }
+export const prescriptionPdf = async (
+  email: string,
+  name: string,
+  medicName: string,
+  specialty: string
+) => {
+  try {
+    // PDFGenerator();
+
+    await sendPrescription(email, name, medicName, specialty);
+  } catch (err: any) {
+    console.log(err);
+  }
+};

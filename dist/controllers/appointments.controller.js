@@ -40,7 +40,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Pdf = exports.WaitListController = exports.AppointmentsTomorrowController = exports.AppointmentByProfessionalController = exports.AppointmentByPatientController = exports.DeleteAppointmentController = exports.UpdateAppointmentController = exports.CreateAppointmentController = void 0;
-var pdfGeneretor_1 = require("../utils/pdfGeneretor");
+// import { PDFGenerator } from "../utils/pdfGeneretor";
 var appointment_service_1 = require("../services/appointment.service");
 var typeorm_1 = require("typeorm");
 var patients_repository_1 = __importDefault(require("../repositories/patients.repository"));
@@ -278,7 +278,7 @@ var Pdf = /** @class */ (function () {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
                 try {
-                    (0, pdfGeneretor_1.PDFGenerator)();
+                    // PDFGenerator();
                     return [2 /*return*/, res.status(200).json("gerou")];
                 }
                 catch (err) {
