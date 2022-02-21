@@ -15,7 +15,7 @@ export class CreateAdminController {
 
       return res.status(201).json(noPasswordData);
     } catch (err: any) {
-      return res.status(400).json({ message: err.message });
+      return res.status(400).json({ message: "E-mail already registered" });
     }
   }
 }
@@ -28,8 +28,8 @@ export class UpdateAdminController {
 
     try {
       const admin = await updateAdminService.execute(id, data);
-
-      return res.status(200).json(admin);
+      const { password, ...noPasswordData } = admin;
+      return res.status(200).json(noPasswordData);
     } catch (err: any) {
       return res.status(400).json({ message: err.message });
     }

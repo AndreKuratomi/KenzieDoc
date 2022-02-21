@@ -13,7 +13,6 @@ const authenticated = (req: any, res: Response, next: NextFunction) => {
       token as string,
       process.env.SECRET as string,
       async (err: any, decoded: any) => {
-        console.log(decoded);
         if (err) {
           return next(new ErrorHandler("Invalid or expired token", 401));
         }

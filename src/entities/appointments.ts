@@ -12,16 +12,23 @@ export class Appointment {
   @PrimaryGeneratedColumn("uuid")
   id!: string;
 
-  @ManyToOne(() => Professional)
-  @JoinColumn({ name: "professionalId" })
+  @ManyToOne(() => Professional, (professional) => professional.appointments, {
+    cascade: true,
+  })
+  @JoinColumn()
   professional!: Professional;
 
-  @ManyToOne(() => Patient)
-  @JoinColumn({ name: "patientId" })
+  @ManyToOne(() => Patient, (patient) => patient.appointments, {
+    cascade: true,
+  })
+  @JoinColumn()
   patient!: Patient;
 
   @Column()
   date: Date;
+
+  @Column()
+  prescription: string;
 
   @Column()
   finished: boolean;
@@ -36,5 +43,6 @@ export class Appointment {
     this.patient = patient;
     this.date = date;
     this.finished = finished;
+    this.prescription = "";
   }
 }

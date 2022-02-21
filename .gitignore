@@ -4,3 +4,5 @@ node_modules
 ormconfig.json
 ormconfig.js
 migrations/
+pdf_printer.ts
+teste.pdf

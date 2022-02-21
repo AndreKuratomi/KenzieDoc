@@ -2,6 +2,7 @@ import AdminRepository from "../repositories/admin.repository";
 import { getCustomRepository } from "typeorm";
 import { Admin } from "../entities";
 import bcryptjs from "bcryptjs";
+import ErrorHandler from "../utils/errors";
 
 export class CreateAdminService {
   async execute(data: Admin) {
@@ -17,6 +18,17 @@ export class CreateAdminService {
 export class UpdateAdminService {
   async execute(id: string, data: Admin) {
     const adminRepository = getCustomRepository(AdminRepository);
+
+    if (id.length !== 36) {
+      throw new ErrorHandler("Invalid uuid posted!", 400);
+    }
+    const isValidAdminUUID = await adminRepository.findOne({
+      where: { id: id },
+    });
+    console.log(isValidAdminUUID);
+    if (!isValidAdminUUID) {
+      throw new ErrorHandler("No uuid found!", 404);
+    }
 
     await adminRepository.update(id, data);
     const updatedAdmin = await adminRepository.findOne(id);

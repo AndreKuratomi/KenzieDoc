@@ -3,12 +3,12 @@ import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 @Entity()
 export class Admin {
   @PrimaryGeneratedColumn("uuid")
-  id: string;
+  id!: string;
 
   @Column()
   name: string;
 
-  @Column()
+  @Column({ unique: true })
   email: string;
 
   @Column()
@@ -17,14 +17,7 @@ export class Admin {
   @Column()
   isAdm: boolean;
 
-  constructor(
-    id: string,
-    name: string,
-    email: string,
-    password: string,
-    isAdm: boolean
-  ) {
-    this.id = id;
+  constructor(name: string, email: string, password: string) {
     this.name = name;
     this.email = email;
     this.password = password;
