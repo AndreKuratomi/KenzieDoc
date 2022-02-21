@@ -11,13 +11,14 @@ const isValidUUID = async (req: Request, res: Response, next: NextFunction) => {
       throw new ErrorHandler("Invalid uuid posted!", 400);
     }
 
-    const isValidUUID = await appointmentsRepository.find({
+    const isValidUUID = await appointmentsRepository.findOne({
       where: { id: id },
     });
 
-    if (isValidUUID.length === 0) {
+    if (!isValidUUID) {
       throw new ErrorHandler("No uuid found!", 404);
     }
+
     next();
   } catch (error: any) {
     return res.status(error.statusCode).json({ Error: error.message });
