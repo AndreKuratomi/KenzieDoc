@@ -28,6 +28,9 @@ export class Appointment {
   date: Date;
 
   @Column()
+  prescription: string;
+
+  @Column()
   finished: boolean;
 
   constructor(
@@ -40,5 +43,6 @@ export class Appointment {
     this.patient = patient;
     this.date = date;
     this.finished = finished;
+    this.prescription = "";
   }
 }

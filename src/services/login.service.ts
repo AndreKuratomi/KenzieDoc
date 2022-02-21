@@ -29,7 +29,7 @@ export class LoginUserService {
         throw new ErrorHandler("Wrong email/password", 400);
       }
       const token = jwt.sign(
-        { cpf: patient.cpf, name: patient.name },
+        { cpf: patient.cpf, name: patient.name, email: patient.email },
         process.env.SECRET as string,
         {
           expiresIn: "1d",
@@ -45,6 +45,8 @@ export class LoginUserService {
         {
           council_number: professional.council_number,
           name: professional.name,
+          email: professional.email,
+          isProf: professional.isProf,
         },
         process.env.SECRET as string,
         {
@@ -59,6 +61,7 @@ export class LoginUserService {
       }
       const token = jwt.sign(
         {
+          id: admin.id,
           email: admin.email,
           name: admin.name,
           isAdm: admin.isAdm,
