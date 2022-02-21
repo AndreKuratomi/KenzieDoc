@@ -74,7 +74,7 @@ export const attachmentTemplateOptions = (
     context,
     attachments: [
       {
-        path: tpath.resolve(__dirname, "..", "utils", "tmp", "receita.pdf"),
+        path: tpath.resolve(__dirname, "tmp", "receita.pdf"),
       },
     ],
   };
