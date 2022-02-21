@@ -27,6 +27,9 @@ export class Professional {
   @OneToMany(() => Appointment, (ap) => ap.professional)
   appointments!: Appointment[];
 
+  @Column()
+  isProf: boolean;
+
   constructor(
     council_number: string,
     name: string,
@@ -43,5 +46,6 @@ export class Professional {
     this.password = password;
     this.specialty = specialty;
     this.address = address;
+    this.isProf = true;
   }
 }
