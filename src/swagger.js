@@ -972,8 +972,8 @@ module.exports = {
   },
   servers: [
     {
-      url: "http://localhost:3000/docs",
-      description: "local server",
+      url: "https://kenzie-doc.herokuapp.com/docs/",
+      description: "Production",
     },
   ],
   paths: paths,
