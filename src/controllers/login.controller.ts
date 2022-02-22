@@ -10,7 +10,7 @@ export class LoginController {
       const token = await login.execute(email, password);
       return res.status(200).send({ token });
     } catch (error: any) {
-      return res.status(error.statusCode).json({ message: error.message });
+      return res.status(400).json({ message: error.message });
     }
   }
 }
