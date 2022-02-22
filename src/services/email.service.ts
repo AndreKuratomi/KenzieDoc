@@ -85,8 +85,6 @@ export const createMail = (body: EmailBody) => {
 
   const email = mailOptions(to, subject, text);
 
-  console.log(email);
-
   transport.sendMail(email, function (err, info) {
     if (err) {
       console.log(err);

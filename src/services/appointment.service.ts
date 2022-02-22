@@ -20,7 +20,10 @@ import {
   formatWaitList,
 } from "../utils/functions";
 import { PDFGenerator } from "../utils/pdfGeneretor";
-import { sendCancelationWhatsapp } from "./whatsapp.service";
+import {
+  sendCancelationWhatsapp,
+  sendUpdateWhatsapp,
+} from "./whatsapp.service";
 
 export class CreateAppointmentService {
   async execute(data: Appointment, date: string, hour: string) {
@@ -118,6 +121,7 @@ export class WaitListService {
 export class UpdateAppointmentService {
   async execute(id: string, data: Appointment) {
     const appointmentsRepository = getCustomRepository(AppointmentsRepository);
+    const date = data.date;
 
     await appointmentsRepository.update(id, data);
 
@@ -137,11 +141,21 @@ export class UpdateAppointmentService {
       finished: updatedAppointment.finished,
     };
 
-    // const email = updatedAppointment.patient.email;
-    // const patientName = updatedAppointment.patient.name;
-    // const {name, specialty} = updatedAppointment.professional;
+    if (date) {
+      const patientName: string = updatedAppointment?.patient.name;
+      const patientPhone: string = updatedAppointment?.patient.phone;
+      const professionalName: string = updatedAppointment?.professional.name;
+      const professionalSpecialty: string =
+        updatedAppointment?.professional.specialty;
 
-    // await prescriptionPdf(email, patientName, name, specialty);
+      await sendUpdateWhatsapp(
+        patientName,
+        patientPhone,
+        professionalName,
+        professionalSpecialty,
+        date
+      );
+    }
 
     return result;
   }
@@ -150,7 +164,6 @@ export class UpdateAppointmentService {
 export class DeleteAppointmentService {
   async execute(id: string) {
     const appointmentsRepository = getCustomRepository(AppointmentsRepository);
-    //
     const patientRepo = getRepository(Patient);
     const proRepo = getRepository(Professional);
 
@@ -200,6 +213,6 @@ export const prescriptionPdf = async (
 
     await sendPrescription(email, name, medicName, specialty);
   } catch (err: any) {
-    console.log(err);
+    err;
   }
 };

@@ -25,7 +25,6 @@ export class UpdateAdminService {
     const isValidAdminUUID = await adminRepository.findOne({
       where: { id: id },
     });
-    console.log(isValidAdminUUID);
     if (!isValidAdminUUID) {
       throw new ErrorHandler("No uuid found!", 404);
     }

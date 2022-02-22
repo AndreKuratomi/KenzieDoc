@@ -25,7 +25,6 @@ export class LoginUserService {
 
     if (patient) {
       if (!bcrypt.compareSync(password, patient.password)) {
-        // return { message: "Wrong email/password" };
         throw new ErrorHandler("Wrong email/password", 400);
       }
       const token = jwt.sign(
@@ -38,7 +37,6 @@ export class LoginUserService {
       return token;
     } else if (professional) {
       if (!bcrypt.compareSync(password, professional.password)) {
-        // return { message: "Wrong email/password" };
         throw new ErrorHandler("Wrong email/password", 400);
       }
       const token = jwt.sign(
@@ -56,7 +54,6 @@ export class LoginUserService {
       return token;
     } else if (admin) {
       if (!bcrypt.compareSync(password, admin.password)) {
-        // return { message: "Wrong email/password" };
         throw new ErrorHandler("Wrong email/password", 400);
       }
       const token = jwt.sign(
@@ -73,8 +70,6 @@ export class LoginUserService {
       );
       return token;
     }
-    //Verify Admin
-    // return { message: "User don't exist" };
     throw new ErrorHandler("User don't exist", 404);
   }
 }
