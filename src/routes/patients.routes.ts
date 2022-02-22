@@ -5,7 +5,9 @@ import {
   UpdatePatientController,
   DeletePatientController,
 } from "../controllers/patient.controller";
+import authenticated from "../middlewares/authenticate.user.middletare";
 import { validateSchema } from "../middlewares/validate.schema.middleware";
+import verifyAdmin from "../middlewares/verify.admin.middleware";
 import { PatientSchema } from "../schemas/patients.schema";
 
 const createPatientController = new CreatePatientController();
@@ -20,7 +22,12 @@ patientsRouter.post(
   validateSchema(PatientSchema),
   createPatientController.handle
 );
-patientsRouter.get("", patientsListController.handle);
+patientsRouter.get(
+  "",
+  authenticated,
+  verifyAdmin,
+  patientsListController.handle
+);
 patientsRouter.patch("/:cpf", updatePatientController.handle);
 patientsRouter.delete("/:cpf", deletePatientController.handle);
 
