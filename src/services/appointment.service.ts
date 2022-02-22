@@ -16,7 +16,7 @@ import {
   formatWaitList,
 } from "../utils/functions";
 import { PDFGenerator } from "../utils/pdfGeneretor";
-import { sendCancelationWhatsapp } from "./whatsapp.service";
+import { sendCancelationWhatsapp, sendUpdateWhatsapp } from "./whatsapp.service";
 
 export class CreateAppointmentService {
   async execute(data: Appointment, date: string, hour: string) {
@@ -132,6 +132,16 @@ export class UpdateAppointmentService {
       patient: updatedAppointment.patient.cpf,
       finished: updatedAppointment.finished,
     };
+
+    // for whatsapp update/reagendamento
+    const patientName: any = updatedAppointment?.patient.name;
+    const patientPhone: any = updatedAppointment?.patient.phone;
+    const professionalName: any = updatedAppointment?.professional.name;
+    const professionalSpecialty: any = updatedAppointment?.professional.specialty;
+    const date:any = updatedAppointment?.date.toLocaleDateString()
+    const hour:any = updatedAppointment?.date.toLocaleTimeString()
+
+    await sendUpdateWhatsapp(patientName, patientPhone, professionalName, professionalSpecialty, date, hour);
 
     // const email = updatedAppointment.patient.email;
     // const patientName = updatedAppointment.patient.name;

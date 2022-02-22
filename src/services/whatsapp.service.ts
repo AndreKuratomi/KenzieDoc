@@ -1,4 +1,6 @@
 import puppeteer from "puppeteer";
+import { getRepository } from "typeorm";
+import { Patient, Professional } from "../entities";
 
 export const sendAppointmentWhatsapp = async (user: string, medic: string, phone: any, specialty: string, date: any) => {
 
@@ -43,30 +45,63 @@ function delay(time:any){
       setTimeout(resolve,time);
   });
 }
+
+// send Update Appointment
+
+export const sendUpdateWhatsapp = async (patientName:string, patientPhone:string, professionalName:string, professionalSpecialty:string, date:string, hour:string) => {
+
+  const message = `  
+
+      ⚠️  *Reagendamento de consulta* %0A%0A
+    *Informamos nova data de consulta:* %0A
+    *Paciente:* ${patientName} %0A
+    *Profissional:* ${professionalName} %0A
+    *Especialidade:* ${professionalSpecialty} %0A
+    *Data:* ${date} %0A
+    *Hora:* ${hour} %0A
+    *Local:* Clínica Kenzie Doc %0A
+    *Endereço:* R. General Mario Tourinho, 1733 %0A%0A
+    *Para reagendar/cancelar a consulta, entre em contato com a Kenzie Doc.* %0A
   
-const runWhatsApp = async (phone: string | string[], message:string) => {
+  `;  
+  
+  runWhatsApp(patientPhone, message)
+
+}
+  
+const runWhatsApp = async (phone: any, message:string) => {
   
   phone = [`+55${phone}`];  
   
-  const browser = await puppeteer.launch({headless : false, args: ["--no-sandbox"]});
-  const page = await browser.newPage();
-  
-  await page.goto(`https://web.whatsapp.com/send?phone=${phone[0]}&text=${message} `);
-  await delay(20000);
-  
-  console.log("Conectado com sucesso!");
-  
-  await page.click("span[data-testid='send']");
-  await delay(20000);
-  
-  for(let index = 1 ; index < phone.length ; index++){
-    await page.goto(`https://web.whatsapp.com/send?phone=${phone[index]}&text=${message} `);
+  try{
+    const browser = await puppeteer.launch({headless : false, args: ["--no-sandbox"]});
+    const page = await browser.newPage();
+    
+    await page.goto(`https://web.whatsapp.com/send?phone=${phone[0]}&text=${message} `);
     await delay(20000);
-    console.log("Enviando mensagem");
+    
+    console.log("Conectado com sucesso!");
+    
     await page.click("span[data-testid='send']");
     await delay(20000);
+    
+    for(let index = 1 ; index < phone.length ; index++){
+      await page.goto(`https://web.whatsapp.com/send?phone=${phone[index]}&text=${message} `);
+      await delay(20000);
+      console.log("Enviando mensagem");
+      await page.click("span[data-testid='send']");
+      await delay(20000);
+    }
+    await browser.close();
+    return
   }
-  await browser.close();
-  return
+  
+  catch(err){
+    const browser = await puppeteer.launch({headless : false, args: ["--no-sandbox"]});
+    console.log(err)
+    await browser.close();
+    return
+  } 
+  
 };
 
