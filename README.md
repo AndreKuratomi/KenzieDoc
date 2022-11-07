@@ -87,7 +87,7 @@ SECRET=digite_sua_chave_de_segurança
 
 Para ter acesso ao descrições detalhes das rotas e seus retornos, conferir documentação completa no link a seguir:
 
-https://manual-api-kenziedoc.vercel.app/
+https://kenziedoc-omega.vercel.app/
 
 # Desenvolvedores da API
 
