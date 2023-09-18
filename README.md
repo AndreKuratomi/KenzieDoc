@@ -34,13 +34,13 @@ git init
 <h5>1. Fazer o clone do reposítório <span style="text-decoration: underline">Users service</span> na sua máquina pelo terminal do computador ou pelo do IDE:</h5>
 
 ```
-git clone https://github.com/AndreKuratomi/Capstone-Q4-Backend.git
+https://github.com/AndreKuratomi/KenzieDoc.git
 ```
 
 <p>Entrar na pasta criada:</p>
 
 ```
-cd Capstone-Q4-Backend
+cd KenzieDoc
 ```
 
 <p>Instalar as dependências:</p>
