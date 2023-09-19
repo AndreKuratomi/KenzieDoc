@@ -11,7 +11,8 @@
 # Sobre
 
 <p>A aplicação KenzieDoc se propõe a cadastrar médicos e pacientes na plataforma possibilitando o agendamento de consultas de maneira simples e intuitiva, além de fazer a gestão de consultas agendadas e a da lista de espera.
-O objetivo da aplicação é ser uma ferramenta que possibilite o profissional de saúde cadastrar sua especialidade e seus locais de atendimento e possibilitar ao paciente  fazer uma busca pelo profissional mais adequado para sua necessidade e  agendar a consulta de forma confortável , prática e rápida.</p>
+O objetivo da aplicação é ser uma ferramenta que possibilite o profissional de saúde cadastrar sua especialidade e seus locais de atendimento e possibilitar ao paciente  fazer uma busca pelo profissional mais adequado para sua necessidade e  agendar a consulta de forma confortável , prática e rápida.
+Esta API utiliza o ambiente de desenvolvimento <b>Node.js</b> e o framework <b>Express.js</b></p>
 <br>
 
 Frontend repository: https://github.com/AndreKuratomi/Capstone-Q4-Frontend
@@ -63,7 +64,7 @@ code .
 
 <br>
 
-Após feito o clone do repositório Kenziedoc, instalar :
+Após feito o clone do repositório KenzieDoc, instalar :
 
 1. O arquivo oculto <b>.env<b> com o comando:
 
@@ -71,7 +72,7 @@ Após feito o clone do repositório Kenziedoc, instalar :
 touch .env
 ```
 
-dentro do arquivo .env configurar os seguintes comandos:
+E dentro do arquivo .env configurar os seguintes comandos:
 
 ```
 POSTGRES_PASSWORD=digite_sua_senha
